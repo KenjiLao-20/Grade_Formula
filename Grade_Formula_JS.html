@@ -5,156 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grade Calculator</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
         body {
-            font-family: 'Press Start 2P', cursive;
-            background: url('https://source.unsplash.com/1600x900/?gaming,cyberpunk') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #fff;
+            background-color: #2D2D2D;
+            color: white;
+            font-family: Arial, sans-serif;
         }
-
-        .book-container {
+        .container {
             display: flex;
-            width: 80%;
-            background: rgba(0, 0, 0, 0.8);
+            justify-content: space-between;
+            width: 800px; /* Set a fixed width for the container */
+            margin: 0 auto;
             padding: 20px;
+            border: 1px solid #FFFFFF;
             border-radius: 10px;
-            box-shadow: 0px 0px 20px rgba(0, 255, 255, 0.8);
-            text-align: center;
+            background-color: #3C3F41;
         }
-
-        .page {
-            width: 50%;
-            padding: 20px;
+        .section {
+            width: 45%; /* Each section takes up 45% of the container */
+            padding: 10px;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            background-color: #4C4F51;
         }
-
-        input {
-            width: 100%;
+        input[type="number"] {
+            width: 100px; /* Set width to accommodate 4 digits */
             padding: 10px;
             margin: 5px 0;
-            border: 1px solid #0ff;
+            border: 1px solid #FFFFFF;
             border-radius: 5px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            color: #0ff;
-        }
-
-        button {
-            background-color: #ff00ff;
+            background-color: #4C4F51;
             color: white;
-            padding: 10px 20px;
+        }
+        button {
+            background-color: #4682B4;
+            color: white;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            font-family: 'Press Start 2P', cursive;
+            width: 150px; /* Set a fixed width for the button */
+            margin-top: 20px; /* Add margin for spacing */
         }
-
-        .result {
+        button:hover {
+            background-color: #5A9BD4;
+        }
+        #result {
+            display: none; /* Initially hidden */
             margin-top: 20px;
-            font-weight: bold;
+            border: 1px solid #FFFFFF;
+            padding: 10px;
+            background-color: #4C4F51;
+            width: 100%; /* Set width for the result box */
+        }
+        #error {
+            color: red;
         }
     </style>
 </head>
 <body>
-    <div class="book-container">
-        <div class="page">
-            <h2>Grade Calculator</h2>
-            <h3>Lecture Prelim Grade</h3>
-            <label>Essay Score:</label>
-            <input type="number" id="essay">
-            
-            <label>PVM Score:</label>
-            <input type="number" id="pvm">
-            
-            <label>Java Basics Score:</label>
-            <input type="number" id="javaBasics">
-            
-            <label>Intro to JS Score:</label>
-            <input type="number" id="introToJS">
-            
-            <label>Prelim Exam Score:</label>
-            <input type="number" id="prelimExamLecture">
-            
-            <label>Number of Absences:</label>
-            <input type="number" id="lectureAbsences">
-            
-            <button onclick="calculateLectureGrade()">Calculate Lecture Grade</button>
-            <div id="resultLecture" class="result"></div>
-        </div>
-        
-        <div class="page">
-            <h3>Laboratory Prelim Grade</h3>
-            <label>Java 1:</label>
-            <input type="number" id="java1">
-            
-            <label>Java 2:</label>
-            <input type="number" id="java2">
-            
-            <label>JS 1:</label>
-            <input type="number" id="js1">
-            
-            <label>JS 2:</label>
-            <input type="number" id="js2">
-            
-            <label>MP 1:</label>
-            <input type="number" id="mp1">
-            
-            <label>MP 2:</label>
-            <input type="number" id="mp2">
-            
-            <label>MP 3:</label>
-            <input type="number" id="mp3">
-            
-            <label>Number of Absences:</label>
-            <input type="number" id="labAbsences">
-            
-            <button onclick="calculateLabGrade()">Calculate Lab Grade</button>
-            <div id="resultLab" class="result"></div>
-        </div>
-    </div>
-    
-    <script>
-        function calculateLectureGrade() {
-            let prelimExamLecture = parseFloat(document.getElementById("prelimExamLecture").value);
-            let essay = parseFloat(document.getElementById("essay").value);
-            let pvm = parseFloat(document.getElementById("pvm").value);
-            let javaBasics = parseFloat(document.getElementById("javaBasics").value);
-            let introToJS = parseFloat(document.getElementById("introToJS").value);
-            let lectureAbsences = parseInt(document.getElementById("lectureAbsences").value);
-            
-            let prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
-            let lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
-            let prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
-            let lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
-            
-            document.getElementById("resultLecture").innerHTML = `<p>Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)}</p>`;
-        }
 
-        function calculateLabGrade() {
-            let java1 = parseFloat(document.getElementById("java1").value);
-            let java2 = parseFloat(document.getElementById("java2").value);
-            let js1 = parseFloat(document.getElementById("js1").value);
-            let js2 = parseFloat(document.getElementById("js2").value);
-            let mp1 = parseFloat(document.getElementById("mp1").value);
-            let mp2 = parseFloat(document.getElementById("mp2").value);
-            let mp3 = parseFloat(document.getElementById("mp3").value);
-            let labAbsences = parseInt(document.getElementById("labAbsences").value);
-            
-            let prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
-            let labWork = (mp1 + mp2 + mp3) / 3;
-            let labAttendance = Math.max(0, 100 - (labAbsences * 10));
-            let prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
-            let labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
-            
-            document.getElementById("resultLab").innerHTML = `<p>Lab Prelim Grade: ${labPrelimGrade.toFixed(2)}</p>`;
+<center><h1>Grade Calculator</h1></center>
+<div class="container">
+    <div class="section">
+        <center><h2>Lecture Grades</h2></center>
+        <label for="prelimExamLecture">Prelim Exam:</label>
+        <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="essay">Essay Score:</label>
+        <input type="number" id="essay" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="pvm">PVM Score:</label>
+        <input type="number" id="pvm" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="javaBasics">Java Basics Score:</label>
+        <input type="number" id="javaBasics" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="introToJS">Intro to JS Score:</label>
+        <input type="number" id="introToJS" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="lectureAbsences">Lecture Absences:</label>
+        <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0" maxlength="4"> <br>
+
+        <button onclick="calculateLectureGrades()">Calculate Grade</button>
+        <div id="lectureResult"></div>
+    </div>
+
+    <div class="section">
+        <center><h2>Laboratory Grades</h2></center>
+        <label for="java1">Java 1 Score:</label>
+        <input type="number" id="java1" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="java2">Java 2 Score:</label>
+        <input type="number" id="java2" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="js1">JS 1 Score:</label>
+        <input type="number" id="js1" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="js2">JS 2 Score:</label>
+        <input type="number" id="js2" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="mp1">MP1 Score:</label>
+        <input type="number" id="mp1" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="mp2">MP2 Score:</label>
+        <input type="number" id="mp2" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="mp3">MP3 Score:</label>
+        <input type="number" id="mp3" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="mp3Docu">MP3 (Docu) Score:</label>
+        <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0" maxlength="4"> <br>
+
+        <label for="labAbsences">Lab Absences:</label>
+        <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0" maxlength="4"> <br>
+
+        <button onclick="calculateLabGrades()">Calculate Grade</button>
+        <div id="labResult"></div>
+    </div>
+</div>
+
+<script>
+    function calculateLectureGrades() {
+        try {
+            const prelimExamLecture = parseFloat(document.getElementById('prelimExamLecture').value);
+            const essay = parseFloat(document.getElementById('essay').value);
+            const pvm = parseFloat(document.getElementById('pvm').value);
+            const javaBasics = parseFloat(document.getElementById('javaBasics').value);
+            const introToJS = parseFloat(document.getElementById('introToJS').value);
+            const lectureAbsences = parseInt(document.getElementById('lectureAbsences').value);
+
+            const prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
+            const lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
+            const prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
+            const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
+
+            document.getElementById('lectureResult').innerHTML = 
+                `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)}`;
+            document.getElementById('lectureResult').style.display = 'block'; // Ensure the result box is displayed
+        } catch (error) {
+            document.getElementById('lectureResult').innerHTML = "Please enter valid numeric values.";
+            document.getElementById('lectureResult').style.display = 'block'; // Ensure the result box is displayed even on error
         }
-    </script>
+    }
+
+    function calculateLabGrades() {
+        try {
+            const java1 = parseFloat(document.getElementById('java1').value);
+            const java2 = parseFloat(document.getElementById('java2').value);
+            const js1 = parseFloat(document.getElementById('js1').value);
+            const js2 = parseFloat(document.getElementById('js2').value);
+            const mp1 = parseFloat(document.getElementById('mp1').value);
+            const mp2 = parseFloat(document.getElementById('mp2').value);
+            const mp3 = parseFloat(document.getElementById('mp3').value);
+            const mp3Docu = parseFloat(document.getElementById('mp3Docu').value);
+            const labAbsences = parseInt(document.getElementById('labAbsences').value);
+
+            const prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
+            const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
+            const labAttendance = Math.max(0, 100 - (labAbsences * 10));
+            const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
+            const labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
+
+            document.getElementById('labResult').innerHTML = 
+                `Laboratory Prelim Grade: ${labPrelimGrade.toFixed(2)}`;
+            document.getElementById('labResult').style.display = 'block'; // Ensure the result box is displayed
+        } catch (error) {
+            document.getElementById('labResult').innerHTML = "Please enter valid numeric values.";
+            document.getElementById('labResult').style.display = 'block'; // Ensure the result box is displayed even on error
+        }
+    }
+</script>
+
 </body>
 </html>
