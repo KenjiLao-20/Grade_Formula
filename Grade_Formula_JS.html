@@ -250,12 +250,20 @@
         const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
 
         let feedback = '';
-        if (lecturePrelimGrade >= 90) feedback = 'Excellent!';
-        else if (lecturePrelimGrade >= 80) feedback = 'Good Job!';
-        else if (lecturePrelimGrade >= 75) feedback = 'You Passed!';
-        else feedback = 'You need to improve.';
+        if (lecturePrelimGrade >= 90) {
+            feedback = 'Excellent!';
+        } else if (lecturePrelimGrade >= 80) {
+            feedback = 'Good Job!';
+        } else if (lecturePrelimGrade >= 75) {
+            feedback = 'You Passed!';
+        } else {
+            feedback = 'You need to improve.';
+        }
 
-        document.getElementById('lectureResult').innerHTML = 
+        // Set the color based on the grade
+        const lectureResultDiv = document.getElementById('lectureResult');
+        lectureResultDiv.style.color = lecturePrelimGrade >= 75 ? 'green' : 'red';
+        lectureResultDiv.innerHTML = 
             `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedback}`;
         
         // Display the formula
@@ -367,7 +375,10 @@
         else if (labPrelimGrade >= 75) feedback = 'You Passed!';
         else feedback = 'You need to improve.';
 
-        document.getElementById('labResult').innerHTML =
+        // Set the color based on the grade
+        const labResultDiv = document.getElementById('labResult');
+        labResultDiv.style.color = labPrelimGrade >= 75 ? 'green' : 'red';
+        labResultDiv.innerHTML =
             `Lab Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedback}`;
         
         // Display the formula
