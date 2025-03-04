@@ -6,14 +6,14 @@
     <title>Grade Calculator</title>
     <style>
         body {
-            background: linear-gradient(to right, #4682B4, #DDA0DD); /* Gradient from blue to lighter purple */
+            background: linear-gradient(to right, #4682B4, #DDA0DD);
             color: white;
             font-family: Arial, sans-serif;
         }
         .container {
             display: flex;
             justify-content: space-between;
-            width: 800px; /* Set a fixed width for the container */
+            width: 800px;
             margin: 0 auto;
             padding: 20px;
             border: 1px solid #FFFFFF;
@@ -21,7 +21,7 @@
             background-color: #3C3F41;
         }
         .section {
-            width: 45%; /* Each section takes up 45% of the container */
+            width: 45%;
             padding: 10px;
             border: 1px solid #FFFFFF;
             border-radius: 10px;
@@ -29,19 +29,19 @@
         }
         .input-group {
             display: flex;
-            justify-content: space-between; /* Aligns label and input to the sides */
-            align-items: center; /* Vertically centers the items */
-            margin-bottom: 10px; /* Space between input groups */
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
         label {
-            margin-right: 5px; /* Space between label and input */
-            width: 50%; /* Set a fixed width for labels */
-            margin-bottom: 2px; /* Reduced space between label and input */
+            margin-right: 5px;
+            width: 50%;
+            margin-bottom: 2px;
         }
         input[type="number"] {
-            width: 100px; /* Set width to accommodate 4 digits */
+            width: 100px;
             padding: 10px;
-            margin: 0; /* Remove margin to align properly */
+            margin: 0;
             border: 1px solid #FFFFFF;
             border-radius: 5px;
             background-color: #4C4F51;
@@ -54,19 +54,19 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            width: 150px; /* Set a fixed width for the button */
-            margin-top: 20px; /* Add margin for spacing */
+            width: 150px;
+            margin-top: 20px;
         }
         button:hover {
             background-color: #5A9BD4;
         }
         #result {
-            display: none; /* Initially hidden */
+            display: none;
             margin-top: 20px;
             border: 1px solid #FFFFFF;
             padding: 10px;
             background-color: #4C4F51;
-            width: 100%; /* Set width for the result box */
+            width: 100%;
         }
         #error {
             color: red;
@@ -81,30 +81,30 @@
         <center><h2>Lecture Grades</h2></center>
         <div class="input-group">
             <label for="prelimExamLecture">Prelim Exam:</label>
-            <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="essay">Essay Score:</label>
-            <input type="number" id="essay" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="essay" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="pvm">PVM Score:</label>
-            <input type="number" id="pvm" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="pvm" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="javaBasics">Java Basics Score:</label>
-            <input type="number" id="javaBasics" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="javaBasics" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="introToJS">Intro to JS Score:</label>
-            <input type="number" id="introToJS" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="introToJS" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="lectureAbsences">Lecture Absences:</label>
-            <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0" maxlength="4">
+            <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
         </div>
         <center><button onclick="calculateLectureGrades()">Calculate Grade</button></center>
-	<br>
+        <br>
         <div id="lectureResult"></div>
     </div>
 
@@ -112,42 +112,42 @@
         <center><h2>Laboratory Grades</h2></center>
         <div class="input-group">
             <label for="java1">Java 1 Score:</label>
-            <input type="number" id="java1" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="java1" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="java2">Java 2 Score:</label>
-            <input type="number" id="java2" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="java2" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="js1">JS 1 Score:</label>
-            <input type="number" id="js1" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="js1" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="js2">JS 2 Score:</label>
-            <input type="number" id="js2" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="js2" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="mp1">MP1 Score:</label>
-            <input type="number" id="mp1" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="mp1" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="mp2">MP2 Score:</label>
-            <input type="number" id="mp2" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="mp2" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="mp3">MP3 Score:</label>
-            <input type="number" id="mp3" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="mp3" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="mp3Docu">MP3 (Docu) Score:</label>
-            <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0" maxlength="4">
+            <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0" maxlength="3">
         </div>
         <div class="input-group">
             <label for="labAbsences">Lab Absences:</label>
-            <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0" maxlength="4">
+            <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
         </div>
         <center><button onclick="calculateLabGrades()">Calculate Grade</button></center>
-	<br>
+        <br>
         <div id="labResult"></div>
     </div>
 </div>
@@ -162,17 +162,34 @@
             const introToJS = parseFloat(document.getElementById('introToJS').value);
             const lectureAbsences = parseInt(document.getElementById('lectureAbsences').value);
 
+            if (isNaN(prelimExamLecture) || prelimExamLecture < 0 || prelimExamLecture > 100 ||
+                isNaN(essay) || essay < 0 || essay > 100 ||
+                isNaN(pvm) || pvm < 0 || pvm > 100 ||
+                isNaN(javaBasics) || javaBasics < 0 || javaBasics > 100 ||
+                isNaN(introToJS) || introToJS < 0 || introToJS > 100 ||
+                isNaN(lectureAbsences) || lectureAbsences < 0 || lectureAbsences > 10) {
+                document.getElementById('lectureResult').innerHTML = "Please enter valid numbers between 0 and 100 for scores and 0 to 10 for absences.";
+                document.getElementById('lectureResult').style.display = 'block';
+                return;
+            }
+
             const prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
             const lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
             const prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
             const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
 
+            let feedback = '';
+            if (lecturePrelimGrade >= 90) feedback = 'Excellent!';
+            else if (lecturePrelimGrade >= 80) feedback = 'Good Job!';
+            else if (lecturePrelimGrade >= 75) feedback = 'You Passed!';
+            else feedback = 'You need to improve.';
+
             document.getElementById('lectureResult').innerHTML = 
-                `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)}`;
-            document.getElementById('lectureResult').style.display = 'block'; // Ensure the result box is displayed
+                `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedback}`;
+            document.getElementById('lectureResult').style.display = 'block';
         } catch (error) {
-            document.getElementById('lectureResult').innerHTML = "Please enter valid numeric values.";
-            document.getElementById('lectureResult').style.display = 'block'; // Ensure the result box is displayed even on error
+            document.getElementById('lectureResult').innerHTML = "An error occurred. Please try again.";
+            document.getElementById('lectureResult').style.display = 'block';
         }
     }
 
@@ -188,18 +205,38 @@
             const mp3Docu = parseFloat(document.getElementById('mp3Docu').value);
             const labAbsences = parseInt(document.getElementById('labAbsences').value);
 
+            if (isNaN(java1) || java1 < 0 || java1 > 100 ||
+                isNaN(java2) || java2 < 0 || java2 > 100 ||
+                isNaN(js1) || js1 < 0 || js1 > 100 ||
+                isNaN(js2) || js2 < 0 || js2 > 100 ||
+                isNaN(mp1) || mp1 < 0 || mp1 > 100 ||
+                isNaN(mp2) || mp2 < 0 || mp2 > 100 ||
+                isNaN(mp3) || mp3 < 0 || mp3 > 100 ||
+                isNaN(mp3Docu) || mp3Docu < 0 || mp3Docu > 100 ||
+                isNaN(labAbsences) || labAbsences < 0 || labAbsences > 10) {
+                document.getElementById('labResult').innerHTML = "Please enter valid numbers between 0 and 100 for scores and 0 to 10 for absences.";
+                document.getElementById('labResult').style.display = 'block';
+                return;
+            }
+
             const prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
             const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
             const labAttendance = Math.max(0, 100 - (labAbsences * 10));
             const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
             const labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
 
+            let feedback = '';
+            if (labPrelimGrade >= 90) feedback = 'Excellent!';
+            else if (labPrelimGrade >= 80) feedback = 'Good Job!';
+            else if (labPrelimGrade >= 75) feedback = 'You Passed!';
+            else feedback = 'You need to improve.';
+
             document.getElementById('labResult').innerHTML = 
-                `Laboratory Prelim Grade: ${labPrelimGrade.toFixed(2)}`;
-            document.getElementById('labResult').style.display = 'block'; // Ensure the result box is displayed
+                `Laboratory Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedback}`;
+            document.getElementById('labResult').style.display = 'block';
         } catch (error) {
-            document.getElementById('labResult').innerHTML = "Please enter valid numeric values.";
-            document.getElementById('labResult').style.display = 'block'; // Ensure the result box is displayed even on error
+            document.getElementById('labResult').innerHTML = "An error occurred. Please try again.";
+            document.getElementById('labResult').style.display = 'block';
         }
     }
 </script>
