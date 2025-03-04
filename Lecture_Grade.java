@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-public class Lecture_Grade {
+public class JavaApplication1 {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new GradeCalculatorFrame());
     }
@@ -16,12 +16,12 @@ public class Lecture_Grade {
 class GradeCalculatorFrame extends JFrame {
     private JTextField prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField, lectureAbsencesField;
     private JTextField java1Field, java2Field, js1Field, js2Field, mp1Field, mp2Field, mp3Field, mp3DocuField, labAbsencesField;
-    private JTextArea resultArea;
+    private JTextArea resultArea, formulaArea;
 
     public GradeCalculatorFrame() {
         // Set up the frame
         setTitle("Grade Calculator");
-        setSize(400, 700);
+        setSize(400, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false); // Disable resizing
         setLayout(new BorderLayout());
@@ -126,13 +126,26 @@ class GradeCalculatorFrame extends JFrame {
                 new LineBorder(Color.WHITE, 2), "Results", TitledBorder.LEFT, TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 14), Color.WHITE));
 
+        // Formula area
+        formulaArea = new JTextArea(10, 20);
+        formulaArea.setEditable(false);
+        formulaArea.setBackground(new Color(60, 63, 65));
+        formulaArea.setForeground(Color.WHITE);
+        formulaArea.setFont(new Font("Arial", Font.PLAIN, 12));
+        formulaArea.setBorder(BorderFactory.createTitledBorder(
+                new LineBorder(Color.WHITE, 2), "Formulas", TitledBorder.LEFT, TitledBorder.TOP,
+                new Font("Arial", Font.BOLD, 14), Color.WHITE));
+
         // Set the result area to fill the remaining space
         resultArea.setLineWrap(true);
         resultArea.setWrapStyleWord(true);
+        formulaArea.setLineWrap(true);
+        formulaArea.setWrapStyleWord(true);
 
         JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.setBackground(new Color(45, 45, 45));
         resultPanel.add(resultArea, BorderLayout.CENTER);
+        resultPanel.add(formulaArea, BorderLayout.SOUTH);
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBackground(new Color(45, 45, 45));
@@ -161,6 +174,18 @@ class GradeCalculatorFrame extends JFrame {
             double introToJS = Double.parseDouble(introToJSField.getText());
             int lectureAbsences = Integer.parseInt(lectureAbsencesField.getText());
 
+            // Validate inputs
+            if (!validateInput(prelimExamLecture, 0, 100) || 
+                !validateInput(essay, 0, 100) || 
+                !validateInput(pvm, 0, 100) || 
+                !validateInput(javaBasics, 0, 100) || 
+                !validateInput(introToJS, 0, 100) || 
+                !validateInput(lectureAbsences, 0, 10)) {
+                resultArea.setText("Please enter valid values for lecture inputs.");
+                formulaArea.setText("");
+                return;
+            }
+
             double prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
             double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
             double prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
@@ -170,6 +195,17 @@ class GradeCalculatorFrame extends JFrame {
             double java2 = Double.parseDouble(java2Field.getText());
             double js1 = Double.parseDouble(js1Field.getText());
             double js2 = Double.parseDouble(js2Field.getText());
+
+            // Validate lab inputs
+            if (!validateInput(java1, 0, 100) || 
+                !validateInput(java2, 0, 100) || 
+                !validateInput(js1, 0, 100) || 
+                !validateInput(js2, 0, 100)) {
+                resultArea.setText("Please enter valid values for lab inputs.");
+                formulaArea.setText("");
+                return;
+            }
+
             double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
 
             double mp1 = Double.parseDouble(mp1Field.getText());
@@ -178,14 +214,59 @@ class GradeCalculatorFrame extends JFrame {
             double mp3Docu = Double.parseDouble(mp3DocuField.getText());
             int labAbsences = Integer.parseInt(labAbsencesField.getText());
 
+            // Validate MP inputs
+            if (!validateInput(mp1, 0, 100) || 
+                !validateInput(mp2, 0, 100) || 
+                !validateInput(mp3, 0, 100) || 
+                !validateInput(mp3Docu, 0, 100) || 
+                !validateInput(labAbsences, 0, 10)) {
+                resultArea.setText("Please enter valid values for MP inputs.");
+                formulaArea.setText("");
+                return;
+            }
+
             double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
             double labAttendance = Math.max(0, 100 - (labAbsences * 10));
             double prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
             double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
 
-            resultArea.setText(String.format("Lecture Prelim Grade: %.2f\nLaboratory Prelim Grade: %.2f", lecturePrelimGrade, labPrelimGrade));
+            // Prepare results
+            String feedbackLecture = getFeedback(lecturePrelimGrade);
+            String feedbackLab = getFeedback(labPrelimGrade);
+
+            resultArea.setText(String.format("Lecture Prelim Grade: %.2f - %s\nLaboratory Prelim Grade: %.2f - %s",
+                    lecturePrelimGrade, feedbackLecture, labPrelimGrade, feedbackLab));
+
+            // Display formulas
+            formulaArea.setText(String.format(
+                "Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)\n" +
+                "Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)\n" +
+                "Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4\n" +
+                "Attendance = 100 - (10 * Lecture Absences)\n\n" +
+                "Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)\n" +
+                "Prelim Exam Lab = (0.2 * Java 1) + (0.3 * Java 2) + (0.2 * JS 1) + (0.3 * JS 2)\n" +
+                "Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)\n" +
+                "Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4\n" +
+                "Attendance = 100 - (10 * Lab Absences)"));
         } catch (NumberFormatException e) {
             resultArea.setText("Please enter valid numeric values.");
+            formulaArea.setText("");
+        }
+    }
+
+    private boolean validateInput(double value, double min, double max) {
+        return value >= min && value <= max;
+    }
+
+    private String getFeedback(double grade) {
+        if (grade >= 90) {
+            return "Excellent!";
+        } else if (grade >= 80) {
+            return "Good Job!";
+        } else if (grade >= 75) {
+            return "You Passed!";
+        } else {
+            return "You need to improve.";
         }
     }
 }
