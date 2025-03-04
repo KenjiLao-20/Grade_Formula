@@ -70,6 +70,8 @@
         }
         #error {
             color: red;
+            margin-left: 10px;
+            display: none; /* Initially hidden */
         }
     </style>
 </head>
@@ -82,30 +84,37 @@
         <div class="input-group">
             <label for="prelimExamLecture">Prelim Exam:</label>
             <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorPrelimExamLecture" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="essay">Essay Score:</label>
             <input type="number" id="essay" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorEssay" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="pvm">PVM Score:</label>
             <input type="number" id="pvm" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorPVM" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="javaBasics">Java Basics Score:</label>
             <input type="number" id="javaBasics" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorJavaBasics" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="introToJS">Intro to JS Score:</label>
             <input type="number" id="introToJS" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorIntroToJS" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="lectureAbsences">Lecture Absences:</label>
             <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
+            <span id="errorLectureAbsences" class="error" style="display:none;">Invalid input</span>
         </div>
         <center><button onclick="calculateLectureGrades()">Calculate Grade</button></center>
         <br>
         <div id="lectureResult"></div>
+        <div id="lectureFormula" style="margin-top: 10px;"></div>
     </div>
 
     <div class="section">
@@ -113,133 +122,269 @@
         <div class="input-group">
             <label for="java1">Java 1 Score:</label>
             <input type="number" id="java1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorJava1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="java2">Java 2 Score:</label>
             <input type="number" id="java2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorJava2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="js1">JS 1 Score:</label>
             <input type="number" id="js1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorJS1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="js2">JS 2 Score:</label>
             <input type="number" id="js2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorJS2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp1">MP1 Score:</label>
             <input type="number" id="mp1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorMP1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp2">MP2 Score:</label>
             <input type="number" id="mp2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorMP2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp3">MP3 Score:</label>
             <input type="number" id="mp3" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorMP3" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp3Docu">MP3 (Docu) Score:</label>
             <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <span id="errorMP3Docu" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="labAbsences">Lab Absences:</label>
             <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
+            <span id="errorLabAbsences" class="error" style="display:none;">Invalid input</span>
         </div>
         <center><button onclick="calculateLabGrades()">Calculate Grade</button></center>
         <br>
         <div id="labResult"></div>
+        <div id="labFormula" style="margin-top: 10px;"></div>
     </div>
 </div>
 
 <script>
+    function showError(inputId, errorId) {
+        document.getElementById(errorId).style.display = 'inline';
+        document.getElementById(inputId).style.borderColor = 'red';
+    }
+
+    function hideError(inputId, errorId) {
+        document.getElementById(errorId).style.display = 'none';
+        document.getElementById(inputId).style.borderColor = '#FFFFFF';
+    }
+
+    function validateInput(value, min, max) {
+        return !isNaN(value) && value >= min && value <= max;
+    }
+
     function calculateLectureGrades() {
-        try {
-            const prelimExamLecture = parseFloat(document.getElementById('prelimExamLecture').value);
-            const essay = parseFloat(document.getElementById('essay').value);
-            const pvm = parseFloat(document.getElementById('pvm').value);
-            const javaBasics = parseFloat(document.getElementById('javaBasics').value);
-            const introToJS = parseFloat(document.getElementById('introToJS').value);
-            const lectureAbsences = parseInt(document.getElementById('lectureAbsences').value);
+        const prelimExamLecture = parseFloat(document.getElementById('prelimExamLecture').value);
+        const essay = parseFloat(document.getElementById('essay').value);
+        const pvm = parseFloat(document.getElementById('pvm').value);
+        const javaBasics = parseFloat(document.getElementById('javaBasics').value);
+        const introToJS = parseFloat(document.getElementById('introToJS').value);
+        const lectureAbsences = parseInt(document.getElementById('lectureAbsences').value);
 
-            if (isNaN(prelimExamLecture) || prelimExamLecture < 0 || prelimExamLecture > 100 ||
-                isNaN(essay) || essay < 0 || essay > 100 ||
-                isNaN(pvm) || pvm < 0 || pvm > 100 ||
-                isNaN(javaBasics) || javaBasics < 0 || javaBasics > 100 ||
-                isNaN(introToJS) || introToJS < 0 || introToJS > 100 ||
-                isNaN(lectureAbsences) || lectureAbsences < 0 || lectureAbsences > 10) {
-                document.getElementById('lectureResult').innerHTML = "Please enter valid numbers between 0 and 100 for scores and 0 to 10 for absences.";
-                document.getElementById('lectureResult').style.display = 'block';
-                return;
-            }
+        let valid = true;
 
-            const prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
-            const lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
-            const prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
-            const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
-
-            let feedback = '';
-            if (lecturePrelimGrade >= 90) feedback = 'Excellent!';
-            else if (lecturePrelimGrade >= 80) feedback = 'Good Job!';
-            else if (lecturePrelimGrade >= 75) feedback = 'You Passed!';
-            else feedback = 'You need to improve.';
-
-            document.getElementById('lectureResult').innerHTML = 
-                `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedback}`;
-            document.getElementById('lectureResult').style.display = 'block';
-        } catch (error) {
-            document.getElementById('lectureResult').innerHTML = "An error occurred. Please try again.";
-            document.getElementById('lectureResult').style.display = 'block';
+        if (!validateInput(prelimExamLecture, 0, 100)) {
+            showError('prelimExamLecture', 'errorPrelimExamLecture');
+            valid = false;
+        } else {
+            hideError('prelimExamLecture', 'errorPrelimExamLecture');
         }
+
+        if (!validateInput(essay, 0, 100)) {
+            showError('essay', 'errorEssay');
+            valid = false;
+        } else {
+            hideError('essay', 'errorEssay');
+        }
+
+        if (!validateInput(pvm, 0, 100)) {
+            showError('pvm', 'errorPVM');
+            valid = false;
+        } else {
+            hideError('pvm', 'errorPVM');
+        }
+
+        if (!validateInput(javaBasics, 0, 100)) {
+            showError('javaBasics', 'errorJavaBasics');
+            valid = false;
+        } else {
+            hideError('javaBasics', 'errorJavaBasics');
+        }
+
+        if (!validateInput(introToJS, 0, 100)) {
+            showError('introToJS', 'errorIntroToJS');
+            valid = false;
+        } else {
+            hideError('introToJS', 'errorIntroToJS');
+        }
+
+        if (!validateInput(lectureAbsences, 0, 10)) {
+            showError('lectureAbsences', 'errorLectureAbsences');
+            valid = false;
+        } else {
+            hideError('lectureAbsences', 'errorLectureAbsences');
+        }
+
+        if (!valid) {
+            document.getElementById('lectureResult').innerHTML = "";
+            document.getElementById('lectureFormula').innerHTML = "";
+            return;
+        }
+
+        const prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
+        const lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
+        const prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
+        const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
+
+        let feedback = '';
+        if (lecturePrelimGrade >= 90) feedback = 'Excellent!';
+        else if (lecturePrelimGrade >= 80) feedback = 'Good Job!';
+        else if (lecturePrelimGrade >= 75) feedback = 'You Passed!';
+        else feedback = 'You need to improve.';
+
+        document.getElementById('lectureResult').innerHTML = 
+            `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedback}`;
+        
+        // Display the formula
+        document.getElementById('lectureFormula').innerHTML = 
+            `Formula: <br>
+            Prelim Grade = Prelim Exam + Prelim Class Standing <br>
+            Prelim Class Standing = Prelim Quizzes + Attendance <br>
+            Prelim Quizzes = (Essay + PVM + Java Basics + Intro To JS) / 4 <br>
+            Attendance = 100% - (10% * Absences) <br>
+            <br>
+            Prelim Grade = (${prelimExamLecture.toFixed(2)}) + (${prelimClassStandingLecture.toFixed(2)}) <br>
+            Prelim Class Standing = (${(0.6 * prelimQuizzes).toFixed(2)}) + (${lectureAttendance.toFixed(2)}) <br>
+            Prelim Quizzes = (${essay} + ${pvm} + ${javaBasics} + ${introToJS}) / 4 = ${prelimQuizzes.toFixed(2)} <br>
+            Attendance = 100% - (10% * ${lectureAbsences}) = ${lectureAttendance.toFixed(2)}`;
     }
 
     function calculateLabGrades() {
-        try {
-            const java1 = parseFloat(document.getElementById('java1').value);
-            const java2 = parseFloat(document.getElementById('java2').value);
-            const js1 = parseFloat(document.getElementById('js1').value);
-            const js2 = parseFloat(document.getElementById('js2').value);
-            const mp1 = parseFloat(document.getElementById('mp1').value);
-            const mp2 = parseFloat(document.getElementById('mp2').value);
-            const mp3 = parseFloat(document.getElementById('mp3').value);
-            const mp3Docu = parseFloat(document.getElementById('mp3Docu').value);
-            const labAbsences = parseInt(document.getElementById('labAbsences').value);
+        const java1 = parseFloat(document.getElementById('java1').value);
+        const java2 = parseFloat(document.getElementById('java2').value);
+        const js1 = parseFloat(document.getElementById('js1').value);
+        const js2 = parseFloat(document.getElementById('js2').value);
+        const mp1 = parseFloat(document.getElementById('mp1').value);
+        const mp2 = parseFloat(document.getElementById('mp2').value);
+        const mp3 = parseFloat(document.getElementById('mp3').value);
+        const mp3Docu = parseFloat(document.getElementById('mp3Docu').value);
+        const labAbsences = parseInt(document.getElementById('labAbsences').value);
 
-            if (isNaN(java1) || java1 < 0 || java1 > 100 ||
-                isNaN(java2) || java2 < 0 || java2 > 100 ||
-                isNaN(js1) || js1 < 0 || js1 > 100 ||
-                isNaN(js2) || js2 < 0 || js2 > 100 ||
-                isNaN(mp1) || mp1 < 0 || mp1 > 100 ||
-                isNaN(mp2) || mp2 < 0 || mp2 > 100 ||
-                isNaN(mp3) || mp3 < 0 || mp3 > 100 ||
-                isNaN(mp3Docu) || mp3Docu < 0 || mp3Docu > 100 ||
-                isNaN(labAbsences) || labAbsences < 0 || labAbsences > 10) {
-                document.getElementById('labResult').innerHTML = "Please enter valid numbers between 0 and 100 for scores and 0 to 10 for absences.";
-                document.getElementById('labResult').style.display = 'block';
-                return;
-            }
+        let valid = true;
 
-            const prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
-            const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
-            const labAttendance = Math.max(0, 100 - (labAbsences * 10));
-            const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
-            const labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
-
-            let feedback = '';
-            if (labPrelimGrade >= 90) feedback = 'Excellent!';
-            else if (labPrelimGrade >= 80) feedback = 'Good Job!';
-            else if (labPrelimGrade >= 75) feedback = 'You Passed!';
-            else feedback = 'You need to improve.';
-
-            document.getElementById('labResult').innerHTML = 
-                `Laboratory Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedback}`;
-            document.getElementById('labResult').style.display = 'block';
-        } catch (error) {
-            document.getElementById('labResult').innerHTML = "An error occurred. Please try again.";
-            document.getElementById('labResult').style.display = 'block';
+        if (!validateInput(java1, 0, 100)) {
+            showError('java1', 'errorJava1');
+            valid = false;
+        } else {
+            hideError('java1', 'errorJava1');
         }
+
+        if (!validateInput(java2, 0, 100)) {
+            showError('java2', 'errorJava2');
+            valid = false;
+        } else {
+            hideError('java2', 'errorJava2');
+        }
+
+        if (!validateInput(js1, 0, 100)) {
+            showError('js1', 'errorJS1');
+            valid = false;
+        } else {
+            hideError('js1', 'errorJS1');
+        }
+
+        if (!validateInput(js2, 0, 100)) {
+            showError('js2', 'errorJS2');
+            valid = false;
+        } else {
+            hideError('js2', 'errorJS2');
+        }
+
+        if (!validateInput(mp1, 0, 100)) {
+            showError('mp1', 'errorMP1');
+            valid = false;
+        } else {
+            hideError('mp1', 'errorMP1');
+        }
+
+        if (!validateInput(mp2, 0, 100)) {
+            showError('mp2', 'errorMP2');
+            valid = false;
+        } else {
+            hideError('mp2', 'errorMP2');
+        }
+
+        if (!validateInput(mp3, 0, 100)) {
+            showError('mp3', 'errorMP3');
+            valid = false;
+        } else {
+            hideError('mp3', 'errorMP3');
+        }
+
+        if (!validateInput(mp3Docu, 0, 100)) {
+            showError('mp3Docu', 'errorMP3Docu');
+            valid = false;
+        } else {
+            hideError('mp3Docu', 'errorMP3Docu');
+        }
+
+        if (!validateInput(labAbsences, 0, 10)) {
+            showError('labAbsences', 'errorLabAbsences');
+            valid = false;
+        } else {
+            hideError('labAbsences', 'errorLabAbsences');
+        }
+
+        if (!valid) {
+            document.getElementById('labResult').innerHTML = "";
+            document.getElementById('labFormula').innerHTML = "";
+            return;
+        }
+
+        // Calculate Prelim Exam and Class Standing
+        const prelimExamLab = (java1 * 0.20) + (java2 * 0.30) + (js1 * 0.20) + (js2 * 0.30);
+        const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4; // Average of MP1, MP2, MP3, and MP3 Docu
+        const labAttendance = Math.max(0, 100 - (labAbsences * 10)); // Attendance calculation
+        const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance); // Class standing calculation
+        const labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab); // Final lab grade calculation
+
+        let feedback = '';
+        if (labPrelimGrade >= 90) feedback = 'Excellent!';
+        else if (labPrelimGrade >= 80) feedback = 'Good Job!';
+        else if (labPrelimGrade >= 75) feedback = 'You Passed!';
+        else feedback = 'You need to improve.';
+
+        document.getElementById('labResult').innerHTML =
+            `Lab Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedback}`;
+        
+        // Display the formula
+        document.getElementById('labFormula').innerHTML = 
+            `Formula: <br>
+            Prelim Grade = Prelim Exam + Prelim Class Standing <br>
+            Prelim Exam = Java 1 * 0.20 + Java 2 * 0.30 + JS 1 * 0.20 + JS 2 * 0.30 <br>
+            Prelim Class Standing = Lab Work + Attendance <br>
+            Lab Work = (MP1 + MP2 + MP3 + MP3(Docu)) / 4 <br>
+            Attendance = 100% - (10% * Lab Absences) <br>
+            <br>
+            Prelim Grade = (${prelimExamLab.toFixed(2)}) + (${prelimClassStandingLab.toFixed(2)}) <br>
+            Prelim Exam = (${java1} * 0.20) + (${java2} * 0.30) + (${js1} * 0.20) + (${js2} * 0.30) = ${prelimExamLab.toFixed(2)} <br>
+            Prelim Class Standing = (${(0.6 * labWork).toFixed(2)}) + (${labAttendance.toFixed(2)}) <br>
+            Lab Work = (${mp1} + ${mp2} + ${mp3} + ${mp3Docu}) / 4 = ${labWork.toFixed(2)} <br>
+            Attendance = 100% - (10% * ${labAbsences}) = ${labAttendance.toFixed(2)}`;
     }
 </script>
-
 </body>
 </html>
