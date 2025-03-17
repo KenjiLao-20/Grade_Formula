@@ -7,23 +7,34 @@ import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-public class JavaApplication1 {
+public class TRYTRYTRY {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new GradeCalculatorFrame());
+        SwingUtilities.invokeLater(GradeCalculatorFrame::new);
     }
 }
 
 class GradeCalculatorFrame extends JFrame {
-    private JTextField prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField, lectureAbsencesField;
-    private JTextField java1Field, java2Field, js1Field, js2Field, mp1Field, mp2Field, mp3Field, mp3DocuField, labAbsencesField;
+    private JTextField nameField, prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField;
+    private JTextField java1Field, java2Field, js1Field, js2Field, mp1Field, mp2Field, mp3Field, mp3DocuField;
     private JTextArea resultArea, formulaArea;
+    private JPanel lectureAbsencesPanel, labAbsencesPanel;
 
     public GradeCalculatorFrame() {
-        // Set up the frame
+        setupFrame();
+        JPanel mainPanel = createMainPanel();
+        JPanel resultPanel = createResultPanel();
+
+        add(mainPanel, BorderLayout.CENTER);
+        add(resultPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private void setupFrame() {
         setTitle("Grade Calculator");
-        setSize(400, 800);
+        setSize(700, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false); // Disable resizing
+        setResizable(false);
         setLayout(new BorderLayout());
 
         // Set a modern look and feel
@@ -33,240 +44,262 @@ class GradeCalculatorFrame extends JFrame {
         UIManager.put("Button.background", new Color(70, 130, 180)); // Steel Blue
         UIManager.put("Button.foreground", Color.WHITE);
         UIManager.put("Label.foreground", Color.WHITE);
+    }
 
-        // Create input panel
-        JPanel inputPanel = new JPanel(new GridLayout(17, 2, 5, 5));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-        inputPanel.setBackground(new Color(45, 45, 45));
+    private JPanel createMainPanel() {
+        JPanel mainPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.setBackground(new Color(45, 45, 45));
 
-        JLabel lectureTitle = new JLabel("LECTURE", SwingConstants.CENTER);
-        lectureTitle.setFont(new Font("Arial", Font.BOLD, 14));
-        lectureTitle.setForeground(Color.WHITE);
-        inputPanel.add(lectureTitle);
-        inputPanel.add(new JLabel());
+        JPanel lecturePanel = createLecturePanel();
+        JPanel labPanel = createLabPanel();
+        mainPanel.add(lecturePanel);
+        mainPanel.add(labPanel);
 
-        inputPanel.add(new JLabel("Prelim Exam:"));
-        prelimExamLectureField = new JTextField(4);
-        inputPanel.add(prelimExamLectureField);
+        return mainPanel;
+    }
 
-        inputPanel.add(new JLabel("Essay Score:"));
-        essayField = new JTextField(4);
-        inputPanel.add(essayField);
+    private JPanel createResultPanel() {
+        JPanel resultPanel = new JPanel(new BorderLayout()); // Change to BorderLayout
+        resultPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        resultPanel.setBackground(new Color(45, 45, 45));
 
-        inputPanel.add(new JLabel("PVM Score:"));
-        pvmField = new JTextField(4);
-        inputPanel.add(pvmField);
-
-        inputPanel.add(new JLabel("Java Basics Score:"));
-        javaBasicsField = new JTextField(4);
-        inputPanel.add(javaBasicsField);
-
-        inputPanel.add(new JLabel("Intro to JS Score:"));
-        introToJSField = new JTextField(4);
-        inputPanel.add(introToJSField);
-
-        inputPanel.add(new JLabel("Lecture Absences:"));
-        lectureAbsencesField = new JTextField(4);
-        inputPanel.add(lectureAbsencesField);
-
-        JLabel labTitle = new JLabel("LABORATORY", SwingConstants.CENTER);
-        labTitle.setFont(new Font("Arial", Font.BOLD, 14));
-        labTitle.setForeground(Color.WHITE);
-        inputPanel.add(labTitle);
-        inputPanel.add(new JLabel());
-
-        inputPanel.add(new JLabel("Java 1 Score:"));
-        java1Field = new JTextField(4);
-        inputPanel.add(java1Field);
-
-        inputPanel.add(new JLabel("Java 2 Score:"));
-        java2Field = new JTextField(4);
-        inputPanel.add(java2Field);
-
-        inputPanel.add(new JLabel("JS 1 Score:"));
-        js1Field = new JTextField(4);
-        inputPanel.add(js1Field);
-
-        inputPanel.add(new JLabel("JS 2 Score:"));
-        js2Field = new JTextField(4);
-        inputPanel.add(js2Field);
-
-        inputPanel.add(new JLabel("MP1 Score:"));
-        mp1Field = new JTextField(4);
-        inputPanel.add(mp1Field);
-
-        inputPanel.add(new JLabel("MP2 Score:"));
-        mp2Field = new JTextField(4);
-        inputPanel.add(mp2Field);
-
-        inputPanel.add(new JLabel("MP3 Score:"));
-        mp3Field = new JTextField(4);
-        inputPanel.add(mp3Field);
-
-        inputPanel.add(new JLabel("MP3 (Docu) Score:"));
-        mp3DocuField = new JTextField(4);
-        inputPanel.add(mp3DocuField);
-
-        inputPanel.add(new JLabel("Lab Absences:"));
-        labAbsencesField = new JTextField(4);
-        inputPanel.add(labAbsencesField);
-
+        resultArea = createResultArea();
+        formulaArea = createFormulaArea();
         JButton calculateButton = new JButton("Calculate Grade");
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(45, 45, 45));
-        buttonPanel.add(calculateButton);
+        calculateButton.addActionListener(e -> calculateGrades());
 
-        // Result area
-        resultArea = new JTextArea(5, 20);
-        resultArea.setEditable(false);
-        resultArea.setBackground(new Color(60, 63, 65));
-        resultArea.setForeground(Color.WHITE);
-        resultArea.setFont(new Font("Arial", Font.BOLD, 14));
-        resultArea.setBorder(BorderFactory.createTitledBorder(
+        // Add resultArea to the center
+        resultPanel.add(resultArea, BorderLayout.CENTER);
+        resultPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.NORTH); // Add space above the formula area
+        resultPanel.add(formulaArea, BorderLayout.NORTH); // Add formulaArea above the button
+        resultPanel.add(calculateButton, BorderLayout.SOUTH); // Place button at the bottom
+
+        return resultPanel;
+    }
+
+    private JTextArea createResultArea() {
+        JTextArea area = new JTextArea(5, 30);
+        area.setEditable(false);
+        area.setFont(new Font("Arial", Font.BOLD, 14));
+        area.setBackground(new Color(60, 63, 65));
+        area.setForeground(Color.WHITE);
+        area.setBorder(BorderFactory.createTitledBorder(
                 new LineBorder(Color.WHITE, 2), "Results", TitledBorder.LEFT, TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 14), Color.WHITE));
+        return area;
+    }
 
-        // Formula area
-        formulaArea = new JTextArea(10, 20);
-        formulaArea.setEditable(false);
-        formulaArea.setBackground(new Color(60, 63, 65));
-        formulaArea.setForeground(Color.WHITE);
-        formulaArea.setFont(new Font("Arial", Font.PLAIN, 12));
-        formulaArea.setBorder(BorderFactory.createTitledBorder(
+    private JTextArea createFormulaArea() {
+        JTextArea area = new JTextArea(10, 30);
+        area.setEditable(false);
+        area.setFont(new Font("Arial", Font.PLAIN, 12));
+        area.setBackground(new Color(60, 63, 65));
+        area.setForeground(Color.WHITE);
+        area.setBorder(BorderFactory.createTitledBorder(
                 new LineBorder(Color.WHITE, 2), "Formulas", TitledBorder.LEFT, TitledBorder.TOP,
                 new Font("Arial", Font.BOLD, 14), Color.WHITE));
+        return area;
+    }
 
-        // Set the result area to fill the remaining space
-        resultArea.setLineWrap(true);
-        resultArea.setWrapStyleWord(true);
-        formulaArea.setLineWrap(true);
-        formulaArea.setWrapStyleWord(true);
+    private JPanel createLecturePanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), "Lecture Grades", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.WHITE));
+        panel.setBackground(new Color(45, 45, 45));
+        GridBagConstraints gbc = createGridBagConstraints();
 
-        JPanel resultPanel = new JPanel(new BorderLayout());
-        resultPanel.setBackground(new Color(45, 45, 45));
-        resultPanel.add(resultArea, BorderLayout.CENTER);
-        resultPanel.add(formulaArea, BorderLayout.SOUTH);
+        addField(panel, gbc, "Name:", nameField = new JTextField());
+        addField(panel, gbc, "Prelim Exam Score:", prelimExamLectureField = new JTextField());
+        addField(panel, gbc, "Essay Score:", essayField = new JTextField());
+        addField(panel, gbc, "PVM Score (max 60):", pvmField = new JTextField());
+        addField(panel, gbc, "Java Basics Score (max 40):", javaBasicsField = new JTextField());
+        addField(panel, gbc, "Intro to JS Score (max 40):", introToJSField = new JTextField());
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBackground(new Color(45, 45, 45));
-        centerPanel.add(inputPanel, BorderLayout.CENTER);
-        centerPanel.add(buttonPanel, BorderLayout.SOUTH);
+        lectureAbsencesPanel = createAbsencesPanel("Lecture Absences");
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2; // Span across both columns
+        panel.add(lectureAbsencesPanel, gbc);
 
-        add(centerPanel, BorderLayout.CENTER);
-        add(resultPanel, BorderLayout.SOUTH); // Add result area to the bottom
+        return panel;
+    }
 
-        calculateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calculateGrades();
-            }
-        });
+    private JPanel createLabPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), "Lab Grades", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.WHITE));
+        panel.setBackground(new Color(45, 45, 45));
+        GridBagConstraints gbc = createGridBagConstraints();
 
-        setVisible(true);
+        addField(panel, gbc, "MP 1 Score:", mp1Field = new JTextField());
+        addField(panel, gbc, "MP 2 Score:", mp2Field = new JTextField());
+        addField(panel, gbc, "MP 3 Score:", mp3Field = new JTextField());
+        addField(panel, gbc, "MP 3 (Docu) Score:", mp3DocuField = new JTextField());
+        addField(panel, gbc, "Java 1 Score:", java1Field = new JTextField());
+        addField(panel, gbc, "Java 2 Score:", java2Field = new JTextField());
+        addField(panel, gbc, "JS 1 Score:", js1Field = new JTextField());
+        addField(panel, gbc, "JS 2 Score:", js2Field = new JTextField());
+
+        labAbsencesPanel = createAbsencesPanel("Lab Absences");
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 2; // Span across both columns
+        panel.add(labAbsencesPanel, gbc);
+
+        return panel;
+    }
+
+    private GridBagConstraints createGridBagConstraints() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        return gbc;
+    }
+
+    private JPanel createAbsencesPanel(String title) {
+        JPanel absencesPanel = new JPanel(new GridLayout(0, 2));
+        absencesPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), title, TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 14), Color.WHITE));
+        absencesPanel.setBackground(new Color(45, 45, 45));
+
+        String[] absenceDates = {"January 21, 2025", "January 28, 2025", "February 04, 2025", "February 11, 2025", "February 18, 2025"};
+        for (String date : absenceDates) {
+            JCheckBox absenceCheckBox = new JCheckBox("Absence on ");
+            absenceCheckBox.setPreferredSize(new Dimension(150, 30)); // Set preferred size for checkbox
+            absencesPanel.add(absenceCheckBox);
+            JLabel dateLabel = new JLabel(date);
+            dateLabel.setForeground(Color.WHITE); // Set label color to white
+            absencesPanel.add(dateLabel);
+        }
+
+        return absencesPanel;
+    }
+
+    private void addField(JPanel panel, GridBagConstraints gbc, String label, JTextField textField) {
+        gbc.gridy++;
+        gbc.gridx = 0;
+        panel.add(new JLabel(label, SwingConstants.RIGHT), gbc);
+        gbc.gridx = 1;
+        textField.setColumns(10);
+        textField.setPreferredSize(new Dimension(150, 30)); // Set preferred size for text fields
+        panel.add(textField, gbc);
     }
 
     private void calculateGrades() {
         try {
+            // Lecture Inputs
             double prelimExamLecture = Double.parseDouble(prelimExamLectureField.getText());
             double essay = Double.parseDouble(essayField.getText());
             double pvm = Double.parseDouble(pvmField.getText());
             double javaBasics = Double.parseDouble(javaBasicsField.getText());
             double introToJS = Double.parseDouble(introToJSField.getText());
-            int lectureAbsences = Integer.parseInt(lectureAbsencesField.getText());
 
-            // Validate inputs
-            if (!validateInput(prelimExamLecture, 0, 100) || 
-                !validateInput(essay, 0, 100) || 
-                !validateInput(pvm, 0, 100) || 
-                !validateInput(javaBasics, 0, 100) || 
-                !validateInput(introToJS, 0, 100) || 
-                !validateInput(lectureAbsences, 0, 10)) {
-                resultArea.setText("Please enter valid values for lecture inputs.");
-                formulaArea.setText("");
+            // Check if any value exceeds the maximum allowed limit
+            if (pvm > 60) {
+                JOptionPane.showMessageDialog(this, "PVM Score cannot exceed 60!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (javaBasics > 40) {
+                JOptionPane.showMessageDialog(this, "Java Basics Score cannot exceed 40!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (introToJS > 40) {
+                JOptionPane.showMessageDialog(this, "Intro to JS Score cannot exceed 40!", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            double prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
-            double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
-            double prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
-            double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
+            // Normalize quiz scores to 100 scale
+            double pvmPercentage = (pvm / 60) * 100;
+            double javaBasicsPercentage = (javaBasics / 40) * 100;
+            double introToJSPercentage = (introToJS / 40) * 100;
 
+            // Weighted quiz calculation
+            double prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
+
+            // Lecture attendance
+            int lectureAbsences = getAbsencesCount(lectureAbsencesPanel);
+            double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
+            double lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
+            double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
+
+            // Lab Inputs
             double java1 = Double.parseDouble(java1Field.getText());
             double java2 = Double.parseDouble(java2Field.getText());
             double js1 = Double.parseDouble(js1Field.getText());
             double js2 = Double.parseDouble(js2Field.getText());
 
-            // Validate lab inputs
-            if (!validateInput(java1, 0, 100) || 
-                !validateInput(java2, 0, 100) || 
-                !validateInput(js1, 0, 100) || 
-                !validateInput(js2, 0, 100)) {
-                resultArea.setText("Please enter valid values for lab inputs.");
-                formulaArea.setText("");
-                return;
-            }
-
+            // Weighted lab prelim exam score
             double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
 
             double mp1 = Double.parseDouble(mp1Field.getText());
             double mp2 = Double.parseDouble(mp2Field.getText());
             double mp3 = Double.parseDouble(mp3Field.getText());
             double mp3Docu = Double.parseDouble(mp3DocuField.getText());
-            int labAbsences = Integer.parseInt(labAbsencesField.getText());
+            int labAbsences = getAbsencesCount(labAbsencesPanel);
 
-            // Validate MP inputs
-            if (!validateInput(mp1, 0, 100) || 
-                !validateInput(mp2, 0, 100) || 
-                !validateInput(mp3, 0, 100) || 
-                !validateInput(mp3Docu, 0, 100) || 
-                !validateInput(labAbsences, 0, 10)) {
-                resultArea.setText("Please enter valid values for MP inputs.");
-                formulaArea.setText("");
-                return;
-            }
-
+            // Lab Work Calculation
             double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
             double labAttendance = Math.max(0, 100 - (labAbsences * 10));
-            double prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance);
-            double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab);
+            double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance);
+            double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding);
 
-            // Prepare results
+            // Display Results
             String feedbackLecture = getFeedback(lecturePrelimGrade);
             String feedbackLab = getFeedback(labPrelimGrade);
-
             resultArea.setText(String.format("Lecture Prelim Grade: %.2f - %s\nLaboratory Prelim Grade: %.2f - %s",
                     lecturePrelimGrade, feedbackLecture, labPrelimGrade, feedbackLab));
 
-            // Display formulas
-            formulaArea.setText(String.format(
+            // Set formulas in the formula area
+            formulaArea.setText(
                 "Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)\n" +
                 "Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)\n" +
                 "Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4\n" +
-                "Attendance = 100 - (10 * Lecture Absences)\n\n" +
+                "Attendance = 100 - (10 * Lecture Absences)\n" +
+                "prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100)\n\n" +
                 "Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)\n" +
                 "Prelim Exam Lab = (0.2 * Java 1) + (0.3 * Java 2) + (0.2 * JS 1) + (0.3 * JS 2)\n" +
                 "Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)\n" +
                 "Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4\n" +
-                "Attendance = 100 - (10 * Lab Absences)"));
-        } catch (NumberFormatException e) {
-            resultArea.setText("Please enter valid numeric values.");
-            formulaArea.setText("");
+                "Attendance = 100 - (10 * Lab Absences)"
+            );
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter valid numbers!", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private boolean validateInput(double value, double min, double max) {
-        return value >= min && value <= max;
+    private int getAbsencesCount(JPanel absencesPanel) {
+        int count = 0;
+        for (Component component : absencesPanel.getComponents()) {
+            if (component instanceof JPanel) { // Check if the component is a JPanel (for each absence)
+                for (Component innerComponent : ((JPanel) component).getComponents()) {
+                    if (innerComponent instanceof JCheckBox) {
+                        JCheckBox checkBox = (JCheckBox) innerComponent;
+                        if (checkBox.isSelected()) {
+                            count++;
+                        }
+                    }
+                }
+            } else if (component instanceof JCheckBox) { // Directly check if the component is a JCheckBox
+                JCheckBox checkBox = (JCheckBox) component;
+                if (checkBox.isSelected()) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     private String getFeedback(double grade) {
         if (grade >= 90) {
             return "Excellent!";
         } else if (grade >= 80) {
-            return "Good Job!";
-        } else if (grade >= 75) {
-            return "You Passed!";
+            return "Very Good!";
+        } else if (grade >= 70) {
+            return "Good!";
+        } else if (grade >= 60) {
+            return "Needs Improvement.";
         } else {
-            return "You need to improve.";
+            return "Failed. Please review your work.";
         }
     }
 }
