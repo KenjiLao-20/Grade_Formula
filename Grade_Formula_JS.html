@@ -83,32 +83,32 @@
         <center><h2>Lecture Grades</h2></center>
         <div class="input-group">
             <label for="prelimExamLecture">Prelim Exam:</label>
-            <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0">
             <span id="errorPrelimExamLecture" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="essay">Essay Score:</label>
-            <input type="number" id="essay" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="essay" required placeholder="0-100" max="100" min="0">
             <span id="errorEssay" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="pvm">PVM Score:</label>
-            <input type="number" id="pvm" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="pvm" required placeholder="0-60" max="60" min="0">
             <span id="errorPVM" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="javaBasics">Java Basics Score:</label>
-            <input type="number" id="javaBasics" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="javaBasics" required placeholder="0-40" max="40" min="0">
             <span id="errorJavaBasics" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="introToJS">Intro to JS Score:</label>
-            <input type="number" id="introToJS" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="introToJS" required placeholder="0-40" max="40" min="0">
             <span id="errorIntroToJS" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="lectureAbsences">Lecture Absences:</label>
-            <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
+            <input type="number" id="lectureAbsences" required placeholder="0-10" max="10" min="0">
             <span id="errorLectureAbsences" class="error" style="display:none;">Invalid input</span>
         </div>
         <center><button onclick="calculateLectureGrades()">Calculate Grade</button></center>
@@ -121,47 +121,47 @@
         <center><h2>Laboratory Grades</h2></center>
         <div class="input-group">
             <label for="java1">Java 1 Score:</label>
-            <input type="number" id="java1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="java1" required placeholder="0-100" max="100" min="0">
             <span id="errorJava1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="java2">Java 2 Score:</label>
-            <input type="number" id="java2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="java2" required placeholder="0-100" max="100" min="0">
             <span id="errorJava2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="js1">JS 1 Score:</label>
-            <input type="number" id="js1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="js1" required placeholder="0-100" max="100" min="0">
             <span id="errorJS1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="js2">JS 2 Score:</label>
-            <input type="number" id="js2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="js2" required placeholder="0-100" max="100" min="0">
             <span id="errorJS2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp1">MP1 Score:</label>
-            <input type="number" id="mp1" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="mp1" required placeholder="0-100" max="100" min="0">
             <span id="errorMP1" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp2">MP2 Score:</label>
-            <input type="number" id="mp2" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="mp2" required placeholder="0-100" max="100" min="0">
             <span id="errorMP2" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp3">MP3 Score:</label>
-            <input type="number" id="mp3" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="mp3" required placeholder="0-100" max="100" min="0">
             <span id="errorMP3" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="mp3Docu">MP3 (Docu) Score:</label>
-            <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0" maxlength="3">
+            <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0">
             <span id="errorMP3Docu" class="error" style="display:none;">Invalid input</span>
         </div>
         <div class="input-group">
             <label for="labAbsences">Lab Absences:</label>
-            <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0" maxlength="3">
+            <input type="number" id="labAbsences" required placeholder="0-10" max="10" min="0">
             <span id="errorLabAbsences" class="error" style="display:none;">Invalid input</span>
         </div>
         <center><button onclick="calculateLabGrades()">Calculate Grade</button></center>
@@ -210,21 +210,21 @@
             hideError('essay', 'errorEssay');
         }
 
-        if (!validateInput(pvm, 0, 100)) {
+        if (!validateInput(pvm, 0, 60)) {
             showError('pvm', 'errorPVM');
             valid = false;
         } else {
             hideError('pvm', 'errorPVM');
         }
 
-        if (!validateInput(javaBasics, 0, 100)) {
+        if (!validateInput(javaBasics, 0, 40)) {
             showError('javaBasics', 'errorJavaBasics');
             valid = false;
         } else {
             hideError('javaBasics', 'errorJavaBasics');
         }
 
-        if (!validateInput(introToJS, 0, 100)) {
+        if (!validateInput(introToJS, 0, 40)) {
             showError('introToJS', 'errorIntroToJS');
             valid = false;
         } else {
@@ -244,7 +244,11 @@
             return;
         }
 
-        const prelimQuizzes = (essay + pvm + javaBasics + introToJS) / 4;
+        const pvmPercentage = (pvm / 60) * 100;
+        const javaBasicsPercentage = (javaBasics / 40) * 100;
+        const introToJSPercentage = (introToJS / 40) * 100;
+
+        const prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
         const lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
         const prelimClassStandingLecture = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
         const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * prelimClassStandingLecture);
@@ -253,31 +257,26 @@
         if (lecturePrelimGrade >= 90) {
             feedback = 'Excellent!';
         } else if (lecturePrelimGrade >= 80) {
-            feedback = 'Good Job!';
-        } else if (lecturePrelimGrade >= 75) {
-            feedback = 'You Passed!';
+            feedback = 'Very Good!';
+        } else if (lecturePrelimGrade >= 70) {
+            feedback = 'Good!';
+        } else if (lecturePrelimGrade >= 60) {
+            feedback = 'Needs Improvement.';
         } else {
-            feedback = 'You need to improve.';
+            feedback = 'Failed. Please review your work.';
         }
 
-        // Set the color based on the grade
         const lectureResultDiv = document.getElementById('lectureResult');
         lectureResultDiv.style.color = lecturePrelimGrade >= 75 ? 'green' : 'red';
         lectureResultDiv.innerHTML = 
             `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedback}`;
         
-        // Display the formula
         document.getElementById('lectureFormula').innerHTML = 
             `Formula: <br>
-            Prelim Grade = Prelim Exam + Prelim Class Standing <br>
-            Prelim Class Standing = Prelim Quizzes + Attendance <br>
-            Prelim Quizzes = (Essay + PVM + Java Basics + Intro To JS) / 4 <br>
-            Attendance = 100% - (10% * Absences) <br>
-            <br>
-            Prelim Grade = (${prelimExamLecture.toFixed(2)}) + (${prelimClassStandingLecture.toFixed(2)}) <br>
-            Prelim Class Standing = (${(0.6 * prelimQuizzes).toFixed(2)}) + (${lectureAttendance.toFixed(2)}) <br>
-            Prelim Quizzes = (${essay} + ${pvm} + ${javaBasics} + ${introToJS}) / 4 = ${prelimQuizzes.toFixed(2)} <br>
-            Attendance = 100% - (10% * ${lectureAbsences}) = ${lectureAttendance.toFixed(2)}`;
+            Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing) <br>
+            Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance) <br>
+            Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4 <br>
+            Attendance = 100 - (10 * Lecture Absences)`;
     }
 
     function calculateLabGrades() {
@@ -362,8 +361,7 @@
             return;
         }
 
-        // Calculate Prelim Exam and Class Standing
-        const prelimExamLab = (java1 * 0.20) + (java2 * 0.30) + (js1 * 0.20) + (js2 * 0.30);
+        const prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
         const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4; // Average of MP1, MP2, MP3, and MP3 Docu
         const labAttendance = Math.max(0, 100 - (labAbsences * 10)); // Attendance calculation
         const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance); // Class standing calculation
@@ -371,30 +369,23 @@
 
         let feedback = '';
         if (labPrelimGrade >= 90) feedback = 'Excellent!';
-        else if (labPrelimGrade >= 80) feedback = 'Good Job!';
-        else if (labPrelimGrade >= 75) feedback = 'You Passed!';
-        else feedback = 'You need to improve.';
+        else if (labPrelimGrade >= 80) feedback = 'Very Good!';
+        else if (labPrelimGrade >= 70) feedback = 'Good!';
+        else if (labPrelimGrade >= 60) feedback = 'Needs Improvement.';
+        else feedback = 'Failed. Please review your work.';
 
-        // Set the color based on the grade
         const labResultDiv = document.getElementById('labResult');
         labResultDiv.style.color = labPrelimGrade >= 75 ? 'green' : 'red';
         labResultDiv.innerHTML =
             `Lab Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedback}`;
         
-        // Display the formula
         document.getElementById('labFormula').innerHTML = 
             `Formula: <br>
-            Prelim Grade = Prelim Exam + Prelim Class Standing <br>
-            Prelim Exam = Java 1 * 0.20 + Java 2 * 0.30 + JS 1 * 0.20 + JS 2 * 0.30 <br>
-            Prelim Class Standing = Lab Work + Attendance <br>
-            Lab Work = (MP1 + MP2 + MP3 + MP3(Docu)) / 4 <br>
-            Attendance = 100% - (10% * Lab Absences) <br>
-            <br>
-            Prelim Grade = (${prelimExamLab.toFixed(2)}) + (${prelimClassStandingLab.toFixed(2)}) <br>
-            Prelim Exam = (${java1} * 0.20) + (${java2} * 0.30) + (${js1} * 0.20) + (${js2} * 0.30) = ${prelimExamLab.toFixed(2)} <br>
-            Prelim Class Standing = (${(0.6 * labWork).toFixed(2)}) + (${labAttendance.toFixed(2)}) <br>
-            Lab Work = (${mp1} + ${mp2} + ${mp3} + ${mp3Docu}) / 4 = ${labWork.toFixed(2)} <br>
-            Attendance = 100% - (10% * ${labAbsences}) = ${labAttendance.toFixed(2)}`;
+            Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab) <br>
+            Prelim Exam Lab = (Java 1 * 0.20) + (Java 2 * 0.30) + (JS 1 * 0.20) + (JS 2 * 0.30) <br>
+            Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance) <br>
+            Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4 <br>
+            Attendance = 100 - (10 * Lab Absences)`;
     }
 </script>
 </body>
