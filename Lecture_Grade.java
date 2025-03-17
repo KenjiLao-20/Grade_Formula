@@ -108,7 +108,6 @@ class GradeCalculatorFrame extends JFrame {
         panel.setBackground(new Color(45, 45, 45));
         GridBagConstraints gbc = createGridBagConstraints();
 
-        addField(panel, gbc, "Name:", nameField = new JTextField());
         addField(panel, gbc, "Prelim Exam Score:", prelimExamLectureField = new JTextField());
         addField(panel, gbc, "Essay Score:", essayField = new JTextField());
         addField(panel, gbc, "PVM Score (max 60):", pvmField = new JTextField());
