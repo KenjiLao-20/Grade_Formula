@@ -2,19 +2,17 @@ package ict.machineproblem_2;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-public class TRYTRYTRY {
+public class JavaApplication2 {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GradeCalculatorFrame::new);
     }
 }
 
 class GradeCalculatorFrame extends JFrame {
-    private JTextField nameField, prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField;
+    private JTextField prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField;
     private JTextField java1Field, java2Field, js1Field, js2Field, mp1Field, mp2Field, mp3Field, mp3DocuField;
     private JTextArea resultArea, formulaArea;
     private JPanel lectureAbsencesPanel, labAbsencesPanel;
@@ -60,7 +58,7 @@ class GradeCalculatorFrame extends JFrame {
     }
 
     private JPanel createResultPanel() {
-        JPanel resultPanel = new JPanel(new BorderLayout()); // Change to BorderLayout
+        JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         resultPanel.setBackground(new Color(45, 45, 45));
 
@@ -69,11 +67,10 @@ class GradeCalculatorFrame extends JFrame {
         JButton calculateButton = new JButton("Calculate Grade");
         calculateButton.addActionListener(e -> calculateGrades());
 
-        // Add resultArea to the center
         resultPanel.add(resultArea, BorderLayout.CENTER);
-        resultPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.NORTH); // Add space above the formula area
-        resultPanel.add(formulaArea, BorderLayout.NORTH); // Add formulaArea above the button
-        resultPanel.add(calculateButton, BorderLayout.SOUTH); // Place button at the bottom
+        resultPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.NORTH);
+        resultPanel.add(formulaArea, BorderLayout.NORTH);
+        resultPanel.add(calculateButton, BorderLayout.SOUTH);
 
         return resultPanel;
     }
@@ -161,7 +158,7 @@ class GradeCalculatorFrame extends JFrame {
         absencesPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), title, TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 14), Color.WHITE));
         absencesPanel.setBackground(new Color(45, 45, 45));
 
-        String[] absenceDates = {"January 21, 2025", "January 28, 2025", "February 04, 2025", "February 11, 2025", "February 18, 2025"};
+        String[] absenceDates = {"January 23, 2025", "January 30, 2025", "February 06, 2025", "February 13, 2025", "February 20, 2025"};
         for (String date : absenceDates) {
             JCheckBox absenceCheckBox = new JCheckBox("Absence on ");
             absenceCheckBox.setPreferredSize(new Dimension(150, 30)); // Set preferred size for checkbox
@@ -194,6 +191,10 @@ class GradeCalculatorFrame extends JFrame {
             double introToJS = Double.parseDouble(introToJSField.getText());
 
             // Check if any value exceeds the maximum allowed limit
+            if (prelimExamLecture > 100 || essay > 100) {
+                JOptionPane.showMessageDialog(this, "Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (pvm > 60) {
                 JOptionPane.showMessageDialog(this, "PVM Score cannot exceed 60!", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -221,11 +222,25 @@ class GradeCalculatorFrame extends JFrame {
             double lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
             double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
 
+            // Check for lecture absences
+            String lectureFeedback = "";
+            if (lectureAbsences >= 4) {
+                lectureFeedback = "Failed due to the amount of absences in lectures.";
+            } else {
+                lectureFeedback = String.format("Lecture Prelim Grade: %.2f - %s", lecturePrelimGrade, getFeedback(lecturePrelimGrade));
+            }
+
             // Lab Inputs
             double java1 = Double.parseDouble(java1Field.getText());
             double java2 = Double.parseDouble(java2Field.getText());
             double js1 = Double.parseDouble(js1Field.getText());
             double js2 = Double.parseDouble(js2Field.getText());
+
+            // Check if lab scores exceed 100
+            if (java1 > 100 || java2 > 100 || js1 > 100 || js2 > 100) {
+                JOptionPane.showMessageDialog(this, "Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             // Weighted lab prelim exam score
             double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
@@ -236,17 +251,27 @@ class GradeCalculatorFrame extends JFrame {
             double mp3Docu = Double.parseDouble(mp3DocuField.getText());
             int labAbsences = getAbsencesCount(labAbsencesPanel);
 
-            // Lab Work Calculation
-            double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
-            double labAttendance = Math.max(0, 100 - (labAbsences * 10));
-            double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance);
-            double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding);
+            // Check if MP scores exceed 100
+            if (mp1 > 100 || mp2 > 100 || mp3 > 100 || mp3Docu > 100) {
+                JOptionPane.showMessageDialog(this, "MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Check for lab absences
+            String labFeedback = "";
+            if (labAbsences >= 4) {
+                labFeedback = "Failed due to the amount of absences in laboratory.";
+            } else {
+                // Lab Work Calculation
+                double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
+                double labAttendance = Math.max(0, 100 - (labAbsences * 10));
+                double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance);
+                double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding);
+                labFeedback = String.format("Laboratory Prelim Grade: %.2f - %s", labPrelimGrade, getFeedback(labPrelimGrade));
+            }
 
             // Display Results
-            String feedbackLecture = getFeedback(lecturePrelimGrade);
-            String feedbackLab = getFeedback(labPrelimGrade);
-            resultArea.setText(String.format("Lecture Prelim Grade: %.2f - %s\nLaboratory Prelim Grade: %.2f - %s",
-                    lecturePrelimGrade, feedbackLecture, labPrelimGrade, feedbackLab));
+            resultArea.setText(lectureFeedback + "\n" + labFeedback);
 
             // Set formulas in the formula area
             formulaArea.setText(
