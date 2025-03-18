@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-public class JavaApplication2 {
+public class TRYTRYTRY {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GradeCalculatorFrame::new);
     }
@@ -318,7 +318,7 @@ class GradeCalculatorFrame extends JFrame {
             return "Excellent!";
         } else if (grade >= 80) {
             return "Very Good!";
-        } else if (grade >= 70) {
+        } else if (grade >= 75) {
             return "Good!";
         } else if (grade >= 60) {
             return "Needs Improvement.";
