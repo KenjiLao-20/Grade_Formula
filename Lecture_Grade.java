@@ -192,19 +192,19 @@ class GradeCalculatorFrame extends JFrame {
 
             // Check if any value exceeds the maximum allowed limit
             if (prelimExamLecture > 100 || essay > 100) {
-                JOptionPane.showMessageDialog(this, "Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error");
                 return;
             }
             if (pvm > 60) {
-                JOptionPane.showMessageDialog(this, "PVM Score cannot exceed 60!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("PVM Score cannot exceed 60!", "Input Error");
                 return;
             }
             if (javaBasics > 40) {
-                JOptionPane.showMessageDialog(this, "Java Basics Score cannot exceed 40!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("Java Basics Score cannot exceed 40!", "Input Error");
                 return;
             }
             if (introToJS > 40) {
-                JOptionPane.showMessageDialog(this, "Intro to JS Score cannot exceed 40!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("Intro to JS Score cannot exceed 40!", "Input Error");
                 return;
             }
 
@@ -238,7 +238,7 @@ class GradeCalculatorFrame extends JFrame {
 
             // Check if lab scores exceed 100
             if (java1 > 100 || java2 > 100 || js1 > 100 || js2 > 100) {
-                JOptionPane.showMessageDialog(this, "Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error");
                 return;
             }
 
@@ -253,7 +253,7 @@ class GradeCalculatorFrame extends JFrame {
 
             // Check if MP scores exceed 100
             if (mp1 > 100 || mp2 > 100 || mp3 > 100 || mp3Docu > 100) {
-                JOptionPane.showMessageDialog(this, "MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error", JOptionPane.ERROR_MESSAGE);
+                showCustomMessageDialog("MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error");
                 return;
             }
 
@@ -287,7 +287,7 @@ class GradeCalculatorFrame extends JFrame {
                 "Attendance = 100 - (10 * Lab Absences)"
             );
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numbers!", "Input Error", JOptionPane.ERROR_MESSAGE);
+            showCustomMessageDialog("Please enter valid numbers!", "Input Error");
         }
     }
 
@@ -325,5 +325,14 @@ class GradeCalculatorFrame extends JFrame {
         } else {
             return "Failed. Please review your work.";
         }
+    }
+
+    private void showCustomMessageDialog(String message, String title) {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(45, 45, 45));
+        JLabel label = new JLabel(message);
+        label.setForeground(Color.WHITE);
+        panel.add(label);
+        JOptionPane.showMessageDialog(this, panel, title, JOptionPane.ERROR_MESSAGE);
     }
 }
