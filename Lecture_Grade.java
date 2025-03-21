@@ -126,14 +126,14 @@ class GradeCalculatorFrame extends JFrame {
         panel.setBackground(new Color(45, 45, 45));
         GridBagConstraints gbc = createGridBagConstraints();
 
-        addField(panel, gbc, "MP 1 Score:", mp1Field = new JTextField());
-        addField(panel, gbc, "MP 2 Score:", mp2Field = new JTextField());
-        addField(panel, gbc, "MP 3 Score:", mp3Field = new JTextField());
-        addField(panel, gbc, "MP 3 (Docu) Score:", mp3DocuField = new JTextField());
         addField(panel, gbc, "Java 1 Score:", java1Field = new JTextField());
         addField(panel, gbc, "Java 2 Score:", java2Field = new JTextField());
         addField(panel, gbc, "JS 1 Score:", js1Field = new JTextField());
         addField(panel, gbc, "JS 2 Score:", js2Field = new JTextField());
+        addField(panel, gbc, "MP 1 Score:", mp1Field = new JTextField());
+        addField(panel, gbc, "MP 2 Score:", mp2Field = new JTextField());
+        addField(panel, gbc, "MP 3 Score:", mp3Field = new JTextField());
+        addField(panel, gbc, "MP 3 (Docu) Score:", mp3DocuField = new JTextField());
 
         labAbsencesPanel = createAbsencesPanel("Lab Absences");
         gbc.gridy++;
@@ -181,115 +181,115 @@ class GradeCalculatorFrame extends JFrame {
         panel.add(textField, gbc);
     }
 
-    private void calculateGrades() {
-        try {
-            // Lecture Inputs
-            double prelimExamLecture = Double.parseDouble(prelimExamLectureField.getText());
-            double essay = Double.parseDouble(essayField.getText());
-            double pvm = Double.parseDouble(pvmField.getText());
-            double javaBasics = Double.parseDouble(javaBasicsField.getText());
-            double introToJS = Double.parseDouble(introToJSField.getText());
+private void calculateGrades() {
+    try {
+        // Lecture Inputs
+        double prelimExamLecture = Double.parseDouble(prelimExamLectureField.getText());
+        double essay = Double.parseDouble(essayField.getText());
+        double pvm = Double.parseDouble(pvmField.getText());
+        double javaBasics = Double.parseDouble(javaBasicsField.getText());
+        double introToJS = Double.parseDouble(introToJSField.getText());
 
-            // Check if any value exceeds the maximum allowed limit
-            if (prelimExamLecture > 100 || essay > 100) {
-                showCustomMessageDialog("Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error");
-                return;
-            }
-            if (pvm > 60) {
-                showCustomMessageDialog("PVM Score cannot exceed 60!", "Input Error");
-                return;
-            }
-            if (javaBasics > 40) {
-                showCustomMessageDialog("Java Basics Score cannot exceed 40!", "Input Error");
-                return;
-            }
-            if (introToJS > 40) {
-                showCustomMessageDialog("Intro to JS Score cannot exceed 40!", "Input Error");
-                return;
-            }
-
-            // Normalize quiz scores to 100 scale
-            double pvmPercentage = (pvm / 60) * 100;
-            double javaBasicsPercentage = (javaBasics / 40) * 100;
-            double introToJSPercentage = (introToJS / 40) * 100;
-
-            // Weighted quiz calculation
-            double prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
-
-            // Lecture attendance
-            int lectureAbsences = getAbsencesCount(lectureAbsencesPanel);
-            double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
-            double lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
-            double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
-
-            // Check for lecture absences
-            String lectureFeedback = "";
-            if (lectureAbsences >= 4) {
-                lectureFeedback = "Failed due to the amount of absences in lectures.";
-            } else {
-                lectureFeedback = String.format("Lecture Prelim Grade: %.2f - %s", lecturePrelimGrade, getFeedback(lecturePrelimGrade));
-            }
-
-            // Lab Inputs
-            double java1 = Double.parseDouble(java1Field.getText());
-            double java2 = Double.parseDouble(java2Field.getText());
-            double js1 = Double.parseDouble(js1Field.getText());
-            double js2 = Double.parseDouble(js2Field.getText());
-
-            // Check if lab scores exceed 100
-            if (java1 > 100 || java2 > 100 || js1 > 100 || js2 > 100) {
-                showCustomMessageDialog("Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error");
-                return;
-            }
-
-            // Weighted lab prelim exam score
-            double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
-
-            double mp1 = Double.parseDouble(mp1Field.getText());
-            double mp2 = Double.parseDouble(mp2Field.getText());
-            double mp3 = Double.parseDouble(mp3Field.getText());
-            double mp3Docu = Double.parseDouble(mp3DocuField.getText());
-            int labAbsences = getAbsencesCount(labAbsencesPanel);
-
-            // Check if MP scores exceed 100
-            if (mp1 > 100 || mp2 > 100 || mp3 > 100 || mp3Docu > 100) {
-                showCustomMessageDialog("MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error");
-                return;
-            }
-
-            // Check for lab absences
-            String labFeedback = "";
-            if (labAbsences >= 4) {
-                labFeedback = "Failed due to the amount of absences in laboratory.";
-            } else {
-                // Lab Work Calculation
-                double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4;
-                double labAttendance = Math.max(0, 100 - (labAbsences * 10));
-                double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance);
-                double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding);
-                labFeedback = String.format("Laboratory Prelim Grade: %.2f - %s", labPrelimGrade, getFeedback(labPrelimGrade));
-            }
-
-            // Display Results
-            resultArea.setText(lectureFeedback + "\n" + labFeedback);
-
-            // Set formulas in the formula area
-            formulaArea.setText(
-                "Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)\n" +
-                "Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)\n" +
-                "Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4\n" +
-                "Attendance = 100 - (10 * Lecture Absences)\n" +
-                "prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100)\n\n" +
-                "Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)\n" +
-                "Prelim Exam Lab = (0.2 * Java 1) + (0.3 * Java 2) + (0.2 * JS 1) + (0.3 * JS 2)\n" +
-                "Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)\n" +
-                "Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4\n" +
-                "Attendance = 100 - (10 * Lab Absences)"
-            );
-        } catch (NumberFormatException ex) {
-            showCustomMessageDialog("Please enter valid numbers!", "Input Error");
+        // Check if any value exceeds the maximum allowed limit
+        if (prelimExamLecture > 100 || essay > 100) {
+            showCustomMessageDialog("Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error");
+            return;
         }
+        if (pvm > 60) {
+            showCustomMessageDialog("PVM Score cannot exceed 60!", "Input Error");
+            return;
+        }
+        if (javaBasics > 40) {
+            showCustomMessageDialog("Java Basics Score cannot exceed 40!", "Input Error");
+            return;
+        }
+        if (introToJS > 40) {
+            showCustomMessageDialog("Intro to JS Score cannot exceed 40!", "Input Error");
+            return;
+        }
+
+        // Normalize quiz scores to 100 scale
+        double pvmPercentage = (pvm / 60) * 100;
+        double javaBasicsPercentage = (javaBasics / 40) * 100;
+        double introToJSPercentage = (introToJS / 40) * 100;
+
+        // Weighted quiz calculation
+        double prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
+
+        // Lecture attendance
+        int lectureAbsences = getAbsencesCount(lectureAbsencesPanel);
+        double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
+        double lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
+        double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
+
+        // Check for lecture absences
+        String lectureFeedback = "";
+        if (lectureAbsences >= 4) {
+            lectureFeedback = "Failed due to the amount of absences in lectures.";
+        } else {
+            lectureFeedback = String.format("Lecture Prelim Grade: %.2f - %s", lecturePrelimGrade, getFeedback(lecturePrelimGrade));
+        }
+
+        // Lab Inputs
+        double java1 = Double.parseDouble(java1Field.getText());
+        double java2 = Double.parseDouble(java2Field.getText());
+        double js1 = Double.parseDouble(js1Field.getText());
+        double js2 = Double.parseDouble(js2Field.getText());
+
+        // Check if lab scores exceed 100
+        if (java1 > 100 || java2 > 100 || js1 > 100 || js2 > 100) {
+            showCustomMessageDialog("Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error");
+            return;
+        }
+
+        // Weighted lab prelim exam score
+        double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
+
+        double mp1 = Double.parseDouble(mp1Field.getText());
+        double mp2 = Double.parseDouble(mp2Field.getText());
+        double mp3 = Double.parseDouble(mp3Field.getText());
+        double mp3Docu = Double.parseDouble(mp3DocuField.getText());
+        int labAbsences = getAbsencesCount(labAbsencesPanel);
+
+        // Check if MP scores exceed 100
+        if (mp1 > 100 || mp2 > 100 || mp3 > 100 || mp3Docu > 100) {
+            showCustomMessageDialog("MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error");
+            return;
+        }
+
+        // Check for lab absences
+        String labFeedback = "";
+        if (labAbsences >= 4) {
+            labFeedback = "Failed due to the amount of absences in laboratory.";
+        } else {
+            // Lab Work Calculation
+            double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4; // Average of MP1, MP2, MP3, and MP3 Docu
+            double labAttendance = Math.max(0, 100 - (labAbsences * 10)); // Attendance calculation
+            double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance); // Class standing calculation
+            double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding); // Final lab grade calculation
+            labFeedback = String.format("Laboratory Prelim Grade: %.2f - %s", labPrelimGrade, getFeedback(labPrelimGrade));
+        }
+
+        // Display Results
+        resultArea.setText(lectureFeedback + "\n" + labFeedback);
+
+        // Set formulas in the formula area
+        formulaArea.setText(
+            "Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)\n" +
+            "Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)\n" +
+            "Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4\n" +
+            "Attendance = 100 - (10 * Lecture Absences)\n" +
+            "prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100)\n\n" +
+            "Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)\n" +
+            "Prelim Exam Lab = (0.2 * Java 1) + (0.3 * Java 2) + (0.2 * JS 1) + (0.3 * JS 2)\n" +
+            "Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)\n" +
+            "Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4\n" +
+            "Attendance = 100 - (10 * Lab Absences)"
+        );
+    } catch (NumberFormatException ex) {
+        showCustomMessageDialog("Please enter valid numbers!", "Input Error");
     }
+}
 
     private int getAbsencesCount(JPanel absencesPanel) {
         int count = 0;
