@@ -1,338 +1,254 @@
-package ict.machineproblem_2;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
 
-public class TRYTRYTRY {
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GradeCalculatorFrame::new);
-    }
-}
+public class GameReleaseDataAnalysis extends JFrame {
+    private DefaultCategoryDataset dataset;
+    private JFreeChart chart;
+    private ChartPanel chartPanel;
+    private JButton uploadButton;
+    private JButton processButton;
+    private JButton exportButton;
+    private JButton toggleThemeButton;
+    private File selectedFile; // Store the uploaded file
+    private boolean isDarkMode = false;
 
-class GradeCalculatorFrame extends JFrame {
-    private JTextField prelimExamLectureField, essayField, pvmField, javaBasicsField, introToJSField;
-    private JTextField java1Field, java2Field, js1Field, js2Field, mp1Field, mp2Field, mp3Field, mp3DocuField;
-    private JTextArea resultArea, formulaArea;
-    private JPanel lectureAbsencesPanel, labAbsencesPanel;
+    public GameReleaseDataAnalysis() {
+        setTitle("Game Release Year Analysis");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
-    public GradeCalculatorFrame() {
-        setupFrame();
-        JPanel mainPanel = createMainPanel();
-        JPanel resultPanel = createResultPanel();
+        dataset = new DefaultCategoryDataset();
+        chart = createChart(dataset);
+        chartPanel = new ChartPanel(chart);
+        add(chartPanel, BorderLayout.CENTER);
 
-        add(mainPanel, BorderLayout.CENTER);
-        add(resultPanel, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        uploadButton = new JButton("Upload CSV");
+        processButton = new JButton("Process Data");
+        exportButton = new JButton("Export Data");
+        exportButton.setEnabled(false); // Initially disabled
+        toggleThemeButton = new JButton("Switch to Dark Mode");
+
+        buttonPanel.add(uploadButton);
+        buttonPanel.add(processButton);
+        buttonPanel.add(exportButton);
+        buttonPanel.add(toggleThemeButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        uploadButton.addActionListener(new UploadFileAction());
+        processButton.addActionListener(new ProcessDataAction());
+        exportButton.addActionListener(new ExportDataAction());
+        toggleThemeButton.addActionListener(new ToggleThemeAction());
+
+        // Set initial theme
+        updateTheme();
 
         setVisible(true);
     }
 
-    private void setupFrame() {
-        setTitle("Grade Calculator");
-        setSize(700, 900);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
-        setLayout(new BorderLayout());
+    private JFreeChart createChart(CategoryDataset dataset) {
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Distribution of Games by Release Year",
+                "Release Year",
+                "Number of Games",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
 
-        // Set a modern look and feel
-        UIManager.put("Panel.background", new Color(45, 45, 45));
-        UIManager.put("TextArea.background", new Color(60, 63, 65));
-        UIManager.put("TextArea.foreground", Color.WHITE);
-        UIManager.put("Button.background", new Color(70, 130, 180)); // Steel Blue
-        UIManager.put("Button.foreground", Color.WHITE);
-        UIManager.put("Label.foreground", Color.WHITE);
+        // Set the same font size for both axis labels
+        Font axisLabelFont = new Font("SansSerif", Font.PLAIN, 12);
+        chart.getCategoryPlot().getDomainAxis().setLabelFont(axisLabelFont);
+        chart.getCategoryPlot().getRangeAxis().setLabelFont(axisLabelFont);
+
+        // Adjust the category label font size
+        CategoryAxis categoryAxis = chart.getCategoryPlot().getDomainAxis();
+        categoryAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 12)); // Same font size for category labels
+        categoryAxis.setCategoryLabelPositions(CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 4.0)); // Rotate labels
+
+        return chart;
     }
 
-    private JPanel createMainPanel() {
-        JPanel mainPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        mainPanel.setBackground(new Color(45, 45, 45));
-
-        JPanel lecturePanel = createLecturePanel();
-        JPanel labPanel = createLabPanel();
-        mainPanel.add(lecturePanel);
-        mainPanel.add(labPanel);
-
-        return mainPanel;
-    }
-
-    private JPanel createResultPanel() {
-        JPanel resultPanel = new JPanel(new BorderLayout());
-        resultPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        resultPanel.setBackground(new Color(45, 45, 45));
-
-        resultArea = createResultArea();
-        formulaArea = createFormulaArea();
-        JButton calculateButton = new JButton("Calculate Grade");
-        calculateButton.addActionListener(e -> calculateGrades());
-
-        resultPanel.add(resultArea, BorderLayout.CENTER);
-        resultPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.NORTH);
-        resultPanel.add(formulaArea, BorderLayout.NORTH);
-        resultPanel.add(calculateButton, BorderLayout.SOUTH);
-
-        return resultPanel;
-    }
-
-    private JTextArea createResultArea() {
-        JTextArea area = new JTextArea(5, 30);
-        area.setEditable(false);
-        area.setFont(new Font("Arial", Font.BOLD, 14));
-        area.setBackground(new Color(60, 63, 65));
-        area.setForeground(Color.WHITE);
-        area.setBorder(BorderFactory.createTitledBorder(
-                new LineBorder(Color.WHITE, 2), "Results", TitledBorder.LEFT, TitledBorder.TOP,
-                new Font("Arial", Font.BOLD, 14), Color.WHITE));
-        return area;
-    }
-
-    private JTextArea createFormulaArea() {
-        JTextArea area = new JTextArea(10, 30);
-        area.setEditable(false);
-        area.setFont(new Font("Arial", Font.PLAIN, 12));
-        area.setBackground(new Color(60, 63, 65));
-        area.setForeground(Color.WHITE);
-        area.setBorder(BorderFactory.createTitledBorder(
-                new LineBorder(Color.WHITE, 2), "Formulas", TitledBorder.LEFT, TitledBorder.TOP,
-                new Font("Arial", Font.BOLD, 14), Color.WHITE));
-        return area;
-    }
-
-    private JPanel createLecturePanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), "Lecture Grades", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.WHITE));
-        panel.setBackground(new Color(45, 45, 45));
-        GridBagConstraints gbc = createGridBagConstraints();
-
-        addField(panel, gbc, "Prelim Exam Score:", prelimExamLectureField = new JTextField());
-        addField(panel, gbc, "Essay Score:", essayField = new JTextField());
-        addField(panel, gbc, "PVM Score (max 60):", pvmField = new JTextField());
-        addField(panel, gbc, "Java Basics Score (max 40):", javaBasicsField = new JTextField());
-        addField(panel, gbc, "Intro to JS Score (max 40):", introToJSField = new JTextField());
-
-        lectureAbsencesPanel = createAbsencesPanel("Lecture Absences");
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2; // Span across both columns
-        panel.add(lectureAbsencesPanel, gbc);
-
-        return panel;
-    }
-
-    private JPanel createLabPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), "Lab Grades", TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 16), Color.WHITE));
-        panel.setBackground(new Color(45, 45, 45));
-        GridBagConstraints gbc = createGridBagConstraints();
-
-        addField(panel, gbc, "Java 1 Score:", java1Field = new JTextField());
-        addField(panel, gbc, "Java 2 Score:", java2Field = new JTextField());
-        addField(panel, gbc, "JS 1 Score:", js1Field = new JTextField());
-        addField(panel, gbc, "JS 2 Score:", js2Field = new JTextField());
-        addField(panel, gbc, "MP 1 Score:", mp1Field = new JTextField());
-        addField(panel, gbc, "MP 2 Score:", mp2Field = new JTextField());
-        addField(panel, gbc, "MP 3 Score:", mp3Field = new JTextField());
-        addField(panel, gbc, "MP 3 (Docu) Score:", mp3DocuField = new JTextField());
-
-        labAbsencesPanel = createAbsencesPanel("Lab Absences");
-        gbc.gridy++;
-        gbc.gridx = 0;
-        gbc.gridwidth = 2; // Span across both columns
-        panel.add(labAbsencesPanel, gbc);
-
-        return panel;
-    }
-
-    private GridBagConstraints createGridBagConstraints() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        return gbc;
-    }
-
-    private JPanel createAbsencesPanel(String title) {
-        JPanel absencesPanel = new JPanel(new GridLayout(0, 2));
-        absencesPanel.setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.WHITE, 2), title, TitledBorder.CENTER, TitledBorder.TOP, new Font("Arial", Font.BOLD, 14), Color.WHITE));
-        absencesPanel.setBackground(new Color(45, 45, 45));
-
-        String[] absenceDates = {"January 23, 2025", "January 30, 2025", "February 06, 2025", "February 13, 2025", "February 20, 2025"};
-        for (String date : absenceDates) {
-            JCheckBox absenceCheckBox = new JCheckBox("Absence on ");
-            absenceCheckBox.setPreferredSize(new Dimension(150, 30)); // Set preferred size for checkbox
-            absencesPanel.add(absenceCheckBox);
-            JLabel dateLabel = new JLabel(date);
-            dateLabel.setForeground(Color.WHITE); // Set label color to white
-            absencesPanel.add(dateLabel);
+    private class UploadFileAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                selectedFile = fileChooser.getSelectedFile();
+                JOptionPane.showMessageDialog(GameReleaseDataAnalysis.this, "File uploaded: " + selectedFile.getName());
+                exportButton.setEnabled(true); // Enable export button after uploading
+            }
         }
-
-        return absencesPanel;
     }
 
-    private void addField(JPanel panel, GridBagConstraints gbc, String label, JTextField textField) {
-        gbc.gridy++;
-        gbc.gridx = 0;
-        panel.add(new JLabel(label, SwingConstants.RIGHT), gbc);
-        gbc.gridx = 1;
-        textField.setColumns(10);
-        textField.setPreferredSize(new Dimension(150, 30)); // Set preferred size for text fields
-        panel.add(textField, gbc);
+    private class ProcessDataAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (selectedFile != null) {
+                processCSVFile(selectedFile);
+            } else {
+                JOptionPane.showMessageDialog(GameReleaseDataAnalysis.this, "Please upload a CSV file first.");
+            }
+        }
     }
 
-private void calculateGrades() {
-    try {
-        // Lecture Inputs
-        double prelimExamLecture = Double.parseDouble(prelimExamLectureField.getText());
-        double essay = Double.parseDouble(essayField.getText());
-        double pvm = Double.parseDouble(pvmField.getText());
-        double javaBasics = Double.parseDouble(javaBasicsField.getText());
-        double introToJS = Double.parseDouble(introToJSField.getText());
+    private void processCSVFile(File file) {
+        dataset.clear(); // Clear previous data
+        Map<String, Integer> yearCountMap = new TreeMap<>(); // Use TreeMap to store year counts
 
-        // Check if any value exceeds the maximum allowed limit
-        if (prelimExamLecture > 100 || essay > 100) {
-            showCustomMessageDialog("Prelim Exam Score and Essay Score cannot exceed 100!", "Input Error");
-            return;
-        }
-        if (pvm > 60) {
-            showCustomMessageDialog("PVM Score cannot exceed 60!", "Input Error");
-            return;
-        }
-        if (javaBasics > 40) {
-            showCustomMessageDialog("Java Basics Score cannot exceed 40!", "Input Error");
-            return;
-        }
-        if (introToJS > 40) {
-            showCustomMessageDialog("Intro to JS Score cannot exceed 40!", "Input Error");
-            return;
-        }
-
-        // Normalize quiz scores to 100 scale
-        double pvmPercentage = (pvm / 60) * 100;
-        double javaBasicsPercentage = (javaBasics / 40) * 100;
-        double introToJSPercentage = (introToJS / 40) * 100;
-
-        // Weighted quiz calculation
-        double prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
-
-        // Lecture attendance
-        int lectureAbsences = getAbsencesCount(lectureAbsencesPanel);
-        double lectureAttendance = Math.max(0, 100 - (lectureAbsences * 10));
-        double lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
-        double lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
-
-        // Check for lecture absences
-        String lectureFeedback = "";
-        if (lectureAbsences >= 4) {
-            lectureFeedback = "Failed due to the amount of absences in lectures.";
-        } else {
-            lectureFeedback = String.format("Lecture Prelim Grade: %.2f - %s", lecturePrelimGrade, getFeedback(lecturePrelimGrade));
-        }
-
-        // Lab Inputs
-        double java1 = Double.parseDouble(java1Field.getText());
-        double java2 = Double.parseDouble(java2Field.getText());
-        double js1 = Double.parseDouble(js1Field.getText());
-        double js2 = Double.parseDouble(js2Field.getText());
-
-        // Check if lab scores exceed 100
-        if (java1 > 100 || java2 > 100 || js1 > 100 || js2 > 100) {
-            showCustomMessageDialog("Java 1, Java 2, JS 1, and JS 2 scores cannot exceed 100!", "Input Error");
-            return;
-        }
-
-        // Weighted lab prelim exam score
-        double prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
-
-        double mp1 = Double.parseDouble(mp1Field.getText());
-        double mp2 = Double.parseDouble(mp2Field.getText());
-        double mp3 = Double.parseDouble(mp3Field.getText());
-        double mp3Docu = Double.parseDouble(mp3DocuField.getText());
-        int labAbsences = getAbsencesCount(labAbsencesPanel);
-
-        // Check if MP scores exceed 100
-        if (mp1 > 100 || mp2 > 100 || mp3 > 100 || mp3Docu > 100) {
-            showCustomMessageDialog("MP 1, MP 2, MP 3, and MP 3 (Docu) scores cannot exceed 100!", "Input Error");
-            return;
-        }
-
-        // Check for lab absences
-        String labFeedback = "";
-        if (labAbsences >= 4) {
-            labFeedback = "Failed due to the amount of absences in laboratory.";
-        } else {
-            // Lab Work Calculation
-            double labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4; // Average of MP1, MP2, MP3, and MP3 Docu
-            double labAttendance = Math.max(0, 100 - (labAbsences * 10)); // Attendance calculation
-            double labPrelimClassStanding = (0.6 * labWork) + (0.4 * labAttendance); // Class standing calculation
-            double labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * labPrelimClassStanding); // Final lab grade calculation
-            labFeedback = String.format("Laboratory Prelim Grade: %.2f - %s", labPrelimGrade, getFeedback(labPrelimGrade));
-        }
-
-        // Display Results
-        resultArea.setText(lectureFeedback + "\n" + labFeedback);
-
-        // Set formulas in the formula area
-        formulaArea.setText(
-            "Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)\n" +
-            "Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)\n" +
-            "Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4\n" +
-            "Attendance = 100 - (10 * Lecture Absences)\n" +
-            "prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100)\n\n" +
-            "Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)\n" +
-            "Prelim Exam Lab = (0.2 * Java 1) + (0.3 * Java 2) + (0.2 * JS 1) + (0.3 * JS 2)\n" +
-            "Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)\n" +
-            "Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4\n" +
-            "Attendance = 100 - (10 * Lab Absences)"
-        );
-    } catch (NumberFormatException ex) {
-        showCustomMessageDialog("Please enter valid numbers!", "Input Error");
-    }
-}
-
-    private int getAbsencesCount(JPanel absencesPanel) {
-        int count = 0;
-        for (Component component : absencesPanel.getComponents()) {
-            if (component instanceof JPanel) { // Check if the component is a JPanel (for each absence)
-                for (Component innerComponent : ((JPanel) component).getComponents()) {
-                    if (innerComponent instanceof JCheckBox) {
-                        JCheckBox checkBox = (JCheckBox) innerComponent;
-                        if (checkBox.isSelected()) {
-                            count++;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            br.readLine(); // Skip header
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(","); // Split by comma
+                if (columns.length > 8) {
+                    String releaseYear = columns[8].trim(); // Assuming the release year is in the 9th column
+                    if (!releaseYear.isEmpty()) {
+                        // Check if the year is within the desired range
+                        int year;
+                        try {
+                            year = Integer.parseInt(releaseYear);
+                            if (year >= 1993 && year <= 2020) {
+                                // Increment the count for the year
+                                yearCountMap.put(releaseYear, yearCountMap.getOrDefault(releaseYear, 0) + 1);
+                            }
+                        } catch (NumberFormatException e) {
+                            // Handle the case where the year is not a valid integer
+                            System.out.println("Invalid year format: " + releaseYear);
                         }
                     }
                 }
-            } else if (component instanceof JCheckBox) { // Directly check if the component is a JCheckBox
-                JCheckBox checkBox = (JCheckBox) component;
-                if (checkBox.isSelected()) {
-                    count++;
+            }
+
+            // Add the sorted data to the dataset
+            for (Map.Entry<String, Integer> entry : yearCountMap.entrySet()) {
+                dataset.addValue(entry.getValue(), "Games", entry.getKey());
+            }
+
+            chart.fireChartChanged(); // Refresh the chart
+            chartPanel.revalidate(); // Revalidate the chart panel
+            chartPanel.repaint(); // Repaint the chart panel
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error reading file: " + ex.getMessage());
+        }
+    }
+
+    private class ExportDataAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (dataset.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(GameReleaseDataAnalysis.this, "No data to export.");
+                return;
+            }
+
+            // Prompt user to select a file location to save the CSV
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Specify a file to save");
+            fileChooser.setSelectedFile(new File("release_year_data.csv")); // Default file name
+
+            int userSelection = fileChooser.showSaveDialog(GameReleaseDataAnalysis.this);
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                    // Write CSV header
+                    writer.write("Release Year,Number of Games");
+                    writer.newLine();
+
+                    // Write data from the dataset
+                    for (int i = 0; i < dataset.getColumnCount(); i++) {
+                        String year = dataset.getColumnKey(i).toString();
+                        Number count = dataset.getValue(0, i); // Assuming single series
+                        writer.write(year + "," + count);
+                        writer.newLine();
+                    }
+
+                    JOptionPane.showMessageDialog(GameReleaseDataAnalysis.this, "Data exported successfully to " + fileToSave.getAbsolutePath());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(GameReleaseDataAnalysis.this, "Error saving file: " + ex.getMessage());
                 }
             }
         }
-        return count;
     }
 
-    private String getFeedback(double grade) {
-        if (grade >= 90) {
-            return "Excellent!";
-        } else if (grade >= 80) {
-            return "Very Good!";
-        } else if (grade >= 75) {
-            return "Good!";
-        } else if (grade >= 60) {
-            return "Needs Improvement.";
-        } else {
-            return "Failed. Please review your work.";
+    private class ToggleThemeAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            isDarkMode = !isDarkMode;
+            updateTheme();
         }
     }
 
-    private void showCustomMessageDialog(String message, String title) {
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(45, 45, 45));
-        JLabel label = new JLabel(message);
-        label.setForeground(Color.WHITE);
-        panel.add(label);
-        JOptionPane.showMessageDialog(this, panel, title, JOptionPane.ERROR_MESSAGE);
+    private void updateTheme() {
+        if (isDarkMode) {
+            getContentPane().setBackground(Color.DARK_GRAY);
+            toggleThemeButton.setText("Switch to Light Mode");
+            chartPanel.setBackground(Color.DARK_GRAY);
+            chart.setBackgroundPaint(Color.DARK_GRAY);
+            chart.getPlot().setBackgroundPaint(Color.DARK_GRAY);
+            chart.getCategoryPlot().setDomainGridlinePaint(Color.LIGHT_GRAY);
+            chart.getCategoryPlot().setRangeGridlinePaint(Color.LIGHT_GRAY);
+            chart.getCategoryPlot().getRenderer().setSeriesPaint(0, Color.CYAN); // Change bar color
+            
+            // Change text colors in the chart
+            chart.getCategoryPlot().getDomainAxis().setLabelPaint(Color.WHITE); // Axis label color
+            chart.getCategoryPlot().getRangeAxis().setLabelPaint(Color.WHITE); // Axis label color
+            chart.getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.LIGHT_GRAY); // Tick label color
+            chart.getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.LIGHT_GRAY); // Tick label color
+            chart.getLegend().setBackgroundPaint(Color.DARK_GRAY); // Legend background color
+            chart.getLegend().setItemPaint(Color.WHITE); // Legend text color
+            
+            // Change button panel color
+            JPanel buttonPanel = (JPanel) getContentPane().getComponent(1);
+            buttonPanel.setBackground(Color.GRAY);
+        } else {
+            getContentPane().setBackground(Color.WHITE);
+            toggleThemeButton.setText("Switch to Dark Mode");
+            chartPanel.setBackground(Color.WHITE);
+            chart.setBackgroundPaint(Color.WHITE);
+            chart.getPlot().setBackgroundPaint(Color.WHITE);
+            chart.getCategoryPlot().setDomainGridlinePaint(Color.GRAY);
+            chart.getCategoryPlot().setRangeGridlinePaint(Color.GRAY);
+            chart.getCategoryPlot().getRenderer().setSeriesPaint(0, Color.BLUE); // Change bar color
+            
+            // Change text colors in the chart
+            chart.getCategoryPlot().getDomainAxis().setLabelPaint(Color.BLACK); // Axis label color
+            chart.getCategoryPlot().getRangeAxis().setLabelPaint(Color.BLACK); // Axis label color
+            chart.getCategoryPlot().getDomainAxis().setTickLabelPaint(Color.BLACK); // Tick label color
+            chart.getCategoryPlot().getRangeAxis().setTickLabelPaint(Color.BLACK); // Tick label color
+            chart.getLegend().setBackgroundPaint(Color.WHITE); // Legend background color
+            chart.getLegend().setItemPaint(Color.BLACK); // Legend text color
+            
+            // Change button panel color
+            JPanel buttonPanel = (JPanel) getContentPane().getComponent(1);
+            buttonPanel.setBackground(Color.LIGHT_GRAY);
+        }
+        chartPanel.repaint(); // Refresh the chart panel
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(GameReleaseDataAnalysis::new);
     }
 }
