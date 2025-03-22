@@ -3,399 +3,427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Release Year Analysis</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <title>Grade Calculator</title>
     <style>
-        :root {
-            --background-color: #ffffff; /* Light mode background */
-            --text-color: #000000; /* Light mode text color */
-            --button-bg: #007bff; /* Button background */
-            --button-text: #ffffff; /* Button text color */
-            --border-color: #000000; /* Light mode border color */
-            --container-bg: #f8f9fa; /* Fixed container background */
-        }
-
-        [data-theme="dark"] {
-            --background-color: #121212; /* Dark mode background */
-            --text-color: #ffffff; /* Dark mode text color */
-            --button-bg: #1e88e5; /* Dark button background */
-            --button-text: #ffffff; /* Dark button text color */
-            --border-color: #ffffff; /* Dark mode border color */
-            --container-bg: #343a40; /* Fixed container background for dark mode */
-        }
-
         body {
+            background: linear-gradient(to right, #4682B4, #DDA0DD);
+            color: white;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
         }
-
         .container {
-            text-align: center; /* Center text */
-            max-width: 800px; /* Limit max width */
-            width: 100%; /* Full width */
-            position: relative; /* Position relative for absolute positioning of the switch */
+            display: flex;
+            justify-content: space-between;
+            width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            background-color: #3C3F41;
         }
-
-        .button-container {
-            background-color: var(--container-bg); /* Fixed background color */
-            padding: 20px; /* Padding for the button container */
-            border-radius: 10px; /* Rounded corners */
-            margin-bottom: 20px; /* Space between button container and chart */
-            display: flex; /* Use flexbox for button alignment */
-            flex-direction: column; /* Stack elements vertically */
-            align-items: center; /* Center items horizontally */
-            position: relative; /* Position relative for the switch */
+        .section {
+            width: 45%;
+            padding: 10px;
+            border: 1px solid #FFFFFF;
+            border-radius: 10px;
+            background-color: #4C4F51;
         }
-
-        .button-row {
-            display: flex; /* Use flexbox for button alignment */
-            justify-content: center; /* Center buttons horizontally */
-            gap: 10px; /* Space between buttons */
-            margin-top: 10px; /* Space above the button row */
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
-
-        .chart-container {
-            height: 400px; /* Set a reasonable height */
-            overflow-x: auto; /* Allow horizontal scrolling */
-            margin: auto;
-            border: 2px solid var(--border-color); /* Border around the chart */
-            border-radius: 10px; /* Rounded corners */
-            padding: 10px; /* Padding inside the border */
-            background-color: var(--background-color); /* Background color for the chart area */
-            transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for border and background */
+        label {
+            margin-right: 5px;
+            width: 50%;
+            margin-bottom: 2px;
         }
-
-        canvas {
-            width: 800px;  /* Set the canvas width */
-            height: 400px; /* Set the canvas height */
-        }
-
-        button {
-            background-color: var(--button-bg);
-            color: var(--button-text);
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
+        input[type="number"] {
+            width: 100px;
+            padding: 10px;
+            margin: 0;
+            border: 1px solid #FFFFFF;
             border-radius: 5px;
-            transition: background-color 0.3s; /* Smooth transition for button */
-            width: 150px; /* Fixed width for buttons */
+            background-color: #4C4F51;
+            color: white;
         }
-
-        button:hover {
-            background-color: darken(var(--button-bg), 10%); /* Darken on hover */
-        }
-
-        .theme-switch {
-            position: absolute; /* Positioning the switch */
-            bottom: 10px; /* Distance from the bottom */
-            left: 10px; /* Distance from the left */
-            display: flex; /* Flexbox for alignment */
-            align-items: center; /* Center vertically */
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px; /* Width of the switch */
-            height: 25px; /* Height of the switch */
-            margin-right: 5px; /* Space between switch and emoji */
-        }
-
-        .switch input {
-            opacity: 0; /* Hide the checkbox */
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
+        button {
+            background-color: #4682B4;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc; /* Background color of the switch */
-            border-radius: 15px; /* Rounded corners */
-            transition: background-color 0.3s; /* Smooth transition for background */
+            width: 150px;
+            margin-top: 20px;
         }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px; /* Height of the circle */
-            width: 20px; /* Width of the circle */
-            left: 2px; /* Start position on the left */
-            bottom: 2.5px; /* Center the circle vertically */
-            background-color: white; /* Circle color */
-            border-radius: 50%; /* Make it circular */
-            transition: transform 0.3s; /* Smooth transition for circle movement */
+        button:hover {
+            background-color: #5A9BD4;
         }
-
-        input:checked + .slider {
-            background-color: #4caf50; /* Change background color when checked */
+        #result {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #FFFFFF;
+            padding: 10px;
+            background-color: #4C4F51;
+            width: 100%;
         }
-
-        input:checked + .slider:before {
-            transform: translateX(25px); /* Move circle to the right */
+        #error {
+            color: red;
+            margin-left: 10px;
+            display: none; /* Initially hidden */
         }
-
-        .slider:after {
-            content: '🌞'; /* Sun icon */
-            position: absolute;
-            left: 1px; /* Position for sun emoji */
-            top: 2px; /* Adjust position for sun emoji */
-            transition: opacity 0.4s;
+        .absences-panel {
+            margin-top: 10px;
+            background-color: #4C4F51;
+            padding: 10px;
+            border-radius: 5px;
         }
-
-        input:checked + .slider:after {
-            content: '🌙'; /* Moon icon */
-            left: 27px; /* Adjust position for moon emoji */
+        .absence-date {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
         }
-
-        .stats-container {
-            display: flex; /* Use flexbox for layout */
-            justify-content: space-around; /* Space out the containers */
-            margin: 20px 0; /* Margin for spacing */
-        }
-
-        .stats-card {
-            background-color: var(--container-bg); /* Background color for stats cards */
-            border-radius: 10px; /* Rounded corners */
-            padding: 20px; /* Padding inside the card */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow for depth */
-            text-align: center; /* Center text */
-            flex: 1; /* Allow cards to grow equally */
-            margin: 0 10px; /* Margin between cards */
-        }
-
-        .stats-card h3 {
-            margin: 0; /* Remove default margin */
-            font-size: 1.5rem; /* Font size for headings */
-        }
-
-        .stats-card .value {
-            font-size: 2rem; /* Font size for values */
-            font-weight: bold; /* Bold text for emphasis */
+        .absence-date input {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="button-container">
-            <h1>Distribution of Games by Release Year</h1>
-            <input type="file" id="fileInput" accept=".csv" />
-            <div class="button-row">
-                <button id="processButton">Process Data</button>
-                <button id="exportButton" style="display:none;">Export Data</button>
-            </div>
-            <div class="theme-switch">
-                <label class="switch">
-                    <input type="checkbox" id="theme-toggle" />
-                    <span class="slider"></span>
-                </label>
-            </div>
+
+<center><h1>Grade Calculator</h1></center>
+<div class="container">
+    <div class="section">
+        <center><h2>Lecture Grades</h2></center>
+        <div class="input-group">
+            <label for="prelimExamLecture">Prelim Exam:</label>
+            <input type="number" id="prelimExamLecture" required placeholder="0-100" max="100" min="0">
+            <span id="errorPrelimExamLecture" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="essay">Essay Score:</label>
+            <input type="number" id="essay" required placeholder="0-100" max="100" min="0">
+            <span id="errorEssay" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="pvm">PVM Score:</label>
+            <input type="number" id="pvm" required placeholder="0-60" max="60" min="0">
+            <span id="errorPVM" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="javaBasics">Java Basics Score:</label>
+            <input type="number" id="javaBasics" required placeholder="0-40" max="40" min="0">
+            <span id="errorJavaBasics" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="introToJS">Intro to JS Score:</label>
+            <input type="number" id="introToJS" required placeholder="0-40" max="40" min="0">
+            <span id="errorIntroToJS" class="error" style="display:none;">Invalid input</span>
         </div>
         
-        <div class="stats-container">
-            <div class="stats-card">
-                <h3>Total Games Released</h3>
-		<br>
-                <div id="totalGames" class="value">0</div>
+        <div class="absences-panel">
+            <h3>Lecture Absences</h3>
+            <div class="absence-date">
+                <input type="checkbox" id="lectureAbsence1">
+                <label for="lectureAbsence1">January 23, 2025</label>
             </div>
-            <div class="stats-card">
-                <h3>Average Games Released</h3>
-		<br>
-                <div id="averageGames" class="value">0</div>
+            <div class="absence-date">
+                <input type="checkbox" id="lectureAbsence2">
+                <label for="lectureAbsence2">January 30, 2025</label>
             </div>
-            <div class="stats-card">
-                <h3>Year with Most Releases</h3>
-		<br>
-                <div id="maxGamesYear" class="value">N/A</div>
+            <div class="absence-date">
+                <input type="checkbox" id="lectureAbsence3">
+                <label for="lectureAbsence3">February 06, 2025</label>
             </div>
-            <div class="stats-card">
-                <h3>Year with Least Releases</h3>
-		<br>
-                <div id="minGamesYear" class="value">N/A</div>
+            <div class="absence-date">
+                <input type="checkbox" id="lectureAbsence4">
+                <label for="lectureAbsence4">February 13, 2025</label>
+            </div>
+            <div class="absence-date">
+                <input type="checkbox" id="lectureAbsence5">
+                <label for="lectureAbsence5">February 20, 2025</label>
             </div>
         </div>
-
-        <div class="chart-container">
-            <canvas id="releaseYearChart"></canvas>
-        </div>
+        <center><button onclick="calculateLectureGrades()">Calculate Grade</button></center>
+        <br>
+        <h3 id="lectureResult"></h3>
+        <div id="lectureFormula" style="margin-top: 10px;"></div>
     </div>
 
-    <script>
-        document.getElementById('processButton').addEventListener('click', processData);
-        document.getElementById('exportButton').addEventListener('click', exportData);
-        document.getElementById('theme-toggle').addEventListener('change', toggleTheme);
+    <div class="section">
+        <center><h2>Laboratory Grades</h2></center>
+        <div class="input-group">
+            <label for="java1">Java 1 Score:</label>
+            <input type="number" id="java1" required placeholder="0-100" max="100" min="0">
+            <span id="errorJava1" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="java2">Java 2 Score:</label>
+            <input type="number" id="java2" required placeholder="0-100" max="100" min="0">
+            <span id="errorJava2" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="js1">JS 1 Score:</label>
+            <input type="number" id="js1" required placeholder="0-100" max="100" min="0">
+            <span id="errorJS1" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="js2">JS 2 Score:</label>
+            <input type="number" id="js2" required placeholder="0-100" max="100" min="0">
+            <span id="errorJS2" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="mp1">MP1 Score:</label>
+            <input type="number" id="mp1" required placeholder="0-100" max="100" min="0">
+            <span id="errorMP1" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="mp2">MP2 Score:</label>
+            <input type="number" id="mp2" required placeholder="0-100" max="100" min="0">
+            <span id="errorMP2" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="mp3">MP3 Score:</label>
+            <input type="number" id="mp3" required placeholder="0-100" max="100" min="0">
+            <span id="errorMP3" class="error" style="display:none;">Invalid input</span>
+        </div>
+        <div class="input-group">
+            <label for="mp3Docu">MP3 (Docu) Score:</label>
+            <input type="number" id="mp3Docu" required placeholder="0-100" max="100" min="0">
+            <span id="errorMP3Docu" class="error" style="display:none;">Invalid input</span>
+        </div>
 
-        let releaseYearData = {};
-        let isDarkMode = false;
+        <div class="absences-panel">
+            <h3>Lab Absences</h3>
+            <div class="absence-date">
+                <input type="checkbox" id="labAbsence1">
+                <label for="labAbsence1">January 21, 2025</label>
+            </div>
+            <div class="absence-date">
+                <input type="checkbox" id="labAbsence2">
+                <label for="labAbsence2">January 28, 2025</label>
+            </div>
+            <div class="absence-date">
+                <input type="checkbox" id="labAbsence3">
+                <label for="labAbsence3">February 04, 2025</label>
+            </div>
+            <div class="absence-date">
+                <input type="checkbox" id="labAbsence4">
+                <label for="labAbsence4">February 11, 2025</label>
+            </div>
+            <div class="absence-date">
+                <input type="checkbox" id="labAbsence5">
+                <label for="labAbsence5">February 18, 2025</label>
+            </div>
+        </div>
+        <center><button onclick="calculateLabGrades ()">Calculate Grade</button></center>
+        <br>
+        <h3 id="labResult"></h3>
+        <div id="labFormula" style="margin-top: 10px;"></div>
+    </div>
+</div>
 
-        function processData() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+<script>
+    function calculateLectureGrades() {
+        const prelimExamLecture = parseFloat(document.getElementById('prelimExamLecture').value) || 0;
+        const essay = parseFloat(document.getElementById('essay').value) || 0;
+        const pvm = parseFloat(document.getElementById('pvm').value) || 0;
+        const javaBasics = parseFloat(document.getElementById('javaBasics').value) || 0;
+        const introToJS = parseFloat(document.getElementById('introToJS').value) || 0;
 
-            if (!file) {
-                alert("Please select a CSV file.");
-                return;
+        const lectureAbsencesCount = getAbsencesCount('lecture');
+
+        // Validate inputs
+        if (!validateInputs(prelimExamLecture, essay, pvm, javaBasics, introToJS)) {
+            return;
+        }
+
+        // Check for absences
+        if (lectureAbsencesCount >= 4) {
+            document.getElementById('lectureResult').innerHTML = "Failed due to the amount of absences.";
+            document.getElementById('lectureFormula').innerHTML = "";
+            return;
+        }
+
+        // Normalize quiz scores to a 100 scale
+        const pvmPercentage = (pvm / 60) * 100;
+        const javaBasicsPercentage = (javaBasics / 40) * 100;
+        const introToJSPercentage = (introToJS / 40) * 100;
+
+        // Weighted quiz calculation
+        const prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100);
+
+        // Calculate lecture attendance
+        const lectureAttendance = Math.max(0, 100 - (lectureAbsencesCount * 10));
+        const lecturePrelimClassStanding = (0.6 * prelimQuizzes) + (0.4 * lectureAttendance);
+        const lecturePrelimGrade = (0.6 * prelimExamLecture) + (0.4 * lecturePrelimClassStanding);
+
+        // Display Results
+        const feedbackLecture = getFeedback(lecturePrelimGrade);
+        document.getElementById('lectureResult').innerHTML = `Lecture Prelim Grade: ${lecturePrelimGrade.toFixed(2)} - ${feedbackLecture}`;
+        document.getElementById('lectureFormula').innerHTML = 
+            `Lecture Prelim Grade = (0.6 * Prelim Exam) + (0.4 * Prelim Class Standing)<br>
+            Prelim Class Standing = (0.6 * Prelim Quizzes) + (0.4 * Attendance)<br>
+            Prelim Quizzes = (Essay + PVM + Java Basics + Intro to JS) / 4<br>
+            Attendance = 100 - (10 * Lecture Absences)<br>
+            prelimQuizzes = (0.24 * pvmPercentage) + (0.31 * javaBasicsPercentage) + (0.2 * introToJSPercentage) + (0.32 * 100)`;
+    }
+
+    function calculateLabGrades() {
+        const java1 = parseFloat(document.getElementById('java1').value) || 0;
+        const java2 = parseFloat(document.getElementById('java2').value) || 0;
+        const js1 = parseFloat(document.getElementById('js1').value) || 0;
+        const js2 = parseFloat(document.getElementById('js2').value) || 0;
+        const mp1 = parseFloat(document.getElementById('mp1').value) || 0;
+        const mp2 = parseFloat(document.getElementById('mp2').value) || 0;
+        const mp3 = parseFloat(document.getElementById('mp3').value) || 0;
+        const mp3Docu = parseFloat(document.getElementById('mp3Docu').value) || 0;
+
+        const labAbsencesCount = getAbsencesCount('lab');
+
+        // Validate inputs
+        if (!validateLabInputs(java1, java2, js1, js2, mp1, mp2, mp3, mp3Docu)) {
+            return;
+        }
+
+        // Check for absences
+        if (labAbsencesCount >= 4) {
+            document.getElementById('labResult').innerHTML = "Failed due to the amount of absences.";
+            document.getElementById('labFormula').innerHTML = "";
+            return;
+        }
+
+        // Lab grades calculation
+        const prelimExamLab = (0.2 * java1) + (0.3 * java2) + (0.2 * js1) + (0.3 * js2);
+        const labWork = (mp1 + mp2 + mp3 + mp3Docu) / 4; // Average of MP1, MP2, MP3, and MP3 Docu
+        const labAttendance = Math.max(0, 100 - (labAbsencesCount * 10)); // Attendance calculation
+        const prelimClassStandingLab = (0.6 * labWork) + (0.4 * labAttendance); // Class standing calculation
+        const labPrelimGrade = (0.6 * prelimExamLab) + (0.4 * prelimClassStandingLab); // Final lab grade calculation
+
+        // Display Results
+        const feedbackLab = getFeedback(labPrelimGrade);
+        document.getElementById('labResult').innerHTML = `Lab Prelim Grade: ${labPrelimGrade.toFixed(2)} - ${feedbackLab}`;
+        document.getElementById('labFormula').innerHTML = 
+            `Lab Prelim Grade = (0.6 * Prelim Exam Lab) + (0.4 * Prelim Class Standing Lab)<br>
+            Prelim Exam Lab = (Java 1 * 0.20) + (Java 2 * 0.30) + (JS 1 * 0.20) + (JS 2 * 0.30)<br>
+            Prelim Class Standing Lab = (0.6 * Lab Work) + (0.4 * Attendance)<br>
+            Lab Work = (MP1 + MP2 + MP3 + MP3 (Docu)) / 4<br>
+            Attendance = 100 - (10 * Lab Absences)`;
+    }
+
+    function getAbsencesCount(type) {
+        let count = 0;
+        const prefix = type === 'lecture' ? 'lectureAbsence' : 'labAbsence';
+        for (let i = 1; i <= 5; i++) {
+            const checkbox = document.getElementById(`${prefix}${i}`);
+            if (checkbox.checked) {
+                count++;
             }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const csvData = event.target.result;
-                parseCSV(csvData);
-                updateStatistics();
-                createChart();
-                document.getElementById('exportButton').style.display = 'block'; // Show export button
-            };
-            reader.readAsText(file);
         }
+        return count;
+    }
 
-        function parseCSV(data) {
-            const rows = data.split('\n').slice(1); // Skip header row
-            releaseYearData = {};
-
-            rows.forEach(row => {
-                const columns = row.split(',');
-                if (columns.length > 8) { // Ensure there are enough columns
-                    const releaseYear = columns[8].trim(); // Assuming the release year is in the 9th column
-                    
-                    // Check if the release year is a valid number and within a reasonable range
-                    if (releaseYear && !isNaN(releaseYear) && releaseYear >= 1993 && releaseYear <= 2020) {
-                        releaseYearData[releaseYear] = (releaseYearData[releaseYear] || 0) + 1;
-                    }
-                } else {
-                    console.error("Row does not have enough columns:", row);
-                }
-            });
-            console.log("Parsed release year data:", releaseYearData);
+    function validateInputs(prelimExamLecture, essay, pvm, javaBasics, introToJS) {
+        let isValid = true;
+        if (prelimExamLecture < 0 || prelimExamLecture > 100) {
+            document.getElementById('errorPrelimExamLecture').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorPrelimExamLecture').style.display = 'none';
         }
-
-        function updateStatistics() {
-            const totalGames = Object.values(releaseYearData).reduce((a, b) => a + b, 0);
-            const averageGames = totalGames / Object.keys(releaseYearData).length || 0;
-
-            // Find the year with the most and least releases
-            const maxGamesYear = Object.keys(releaseYearData).reduce((a, b) => releaseYearData[a] > releaseYearData[b] ? a : b);
-            const minGamesYear = Object.keys(releaseYearData).reduce((a, b) => releaseYearData[a] < releaseYearData[b] ? a : b);
-
-            document.getElementById('totalGames').textContent = totalGames;
-            document.getElementById('averageGames').textContent = averageGames.toFixed(2);
-            document.getElementById('maxGamesYear').textContent = maxGamesYear;
-            document.getElementById('minGamesYear').textContent = minGamesYear;
+        if (essay < 0 || essay > 100) {
+            document.getElementById('errorEssay').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorEssay').style.display = 'none';
         }
-
-        function createChart() {
-            const ctx = document.getElementById('releaseYearChart').getContext('2d');
-            const labels = Object.keys(releaseYearData).sort(); // Sort years
-            const data = Object.values(releaseYearData);
-
-            const chart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Number of Games Released',
-                        data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(tooltipItem) {
-                                    return `${tooltipItem.label}: ${tooltipItem.raw} games`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'end',
-                            formatter: (value) => value,
-                            color: 'black',
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Distribution of Games by Release Year',
-                        font: {
-                            size: 20
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Games',
-                                font: {
-                                    size: 16
-                                }
-                            },
-                            ticks: {
-                                stepSize: 1
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Release Year',
-                                font: {
-                                    size: 16
-                                }
-                            },
-                            ticks: {
-                                autoSkip: false
-                            }
-                        }
-                    }
-                }
-            });
+        if (pvm < 0 || pvm > 60) {
+            document.getElementById('errorPVM').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorPVM').style.display = 'none';
         }
-
-        function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        if (javaBasics < 0 || javaBasics > 40) {
+            document.getElementById('errorJavaBasics').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorJavaBasics').style.display = 'none';
         }
-
-        function exportData() {
-            const csvContent = "data:text/csv;charset=utf-8," 
-                + "Release Year,Number of Games\n"
-                + Object.entries(releaseYearData)
-                    .map(([year, count]) => `${year},${count}`)
-                    .join("\n");
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "release_year_data.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (introToJS < 0 || introToJS > 40) {
+            document.getElementById('errorIntroToJS').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorIntroToJS').style.display = 'none';
         }
-    </script>
+        return isValid;
+    }
+
+    function validateLabInputs(java1, java2, js1, js2, mp1, mp2, mp3, mp3Docu) {
+        let isValid = true;
+        if (java1 < 0 || java1 > 100) {
+            document.getElementById('errorJava1').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorJava1').style.display = 'none';
+        }
+        if (java2 < 0 || java2 > 100) {
+            document.getElementById('errorJava2').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorJava2').style.display = 'none';
+        }
+        if (js1 < 0 || js1 > 100) {
+            document.getElementById('errorJS1').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorJS1').style.display = 'none';
+        }
+        if (js2 < 0 || js2 > 100) {
+            document.getElementById('errorJS2').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorJS2').style.display = 'none';
+        }
+        if (mp1 < 0 || mp1 > 100) {
+            document.getElementById('errorMP1').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorMP1').style.display = 'none';
+        }
+        if (mp2 < 0 || mp2 > 100) {
+            document.getElementById('errorMP2').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorMP2').style.display = 'none';
+        }
+        if (mp3 < 0 || mp3 > 100) {
+            document.getElementById('errorMP3').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorMP3').style.display = 'none';
+        }
+        if (mp3Docu < 0 || mp3Docu > 100) {
+            document.getElementById('errorMP3Docu').style.display = 'inline';
+            isValid = false;
+        } else {
+            document.getElementById('errorMP3Docu').style.display = 'none';
+        }
+        return isValid;
+    }
+
+    function getFeedback(grade) {
+        if (grade >= 90) {
+            return "Excellent!";
+        } else if (grade >= 80) {
+            return "Very Good!";
+        } else if (grade >= 75) {
+            return "Good!";
+        } else if (grade >= 60) {
+            return "Needs Improvement.";
+        } else {
+            return "Failed. Please review your work.";
+        }
+    }
+</script>
 </body>
 </html>
